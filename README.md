@@ -1,0 +1,2 @@
+# DTH235759_NguyenDatTai_DH24TH3_NOPDOAN_PYTHON
+DTH235759 Nguyễn Đạt Tài, DTH235758 Nguyễn Võ Thanh Sơn, DTH235829 Lưu Trọng Quý
