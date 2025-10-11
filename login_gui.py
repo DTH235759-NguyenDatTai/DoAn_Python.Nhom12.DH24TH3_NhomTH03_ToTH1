@@ -1,13 +1,48 @@
+import hashlib
 import tkinter as tk
 from tkinter import font, messagebox
+import pyodbc
+import mainform
 
 def on_login():
     username = entry_user.get().strip()
     password = entry_pass.get().strip()
     if username == "" or password == "":
         messagebox.showwarning("Thiếu thông tin", "Vui lòng nhập tên đăng nhập và mật khẩu.")
-    else:
-        messagebox.showinfo("Đăng nhập", f"Đăng nhập thành công với tài khoản: {username}")
+    # =====Nếu đăng nhập thành công=====
+    try:
+        # ====Kết nối tới sql server====
+        conn = pyodbc.connect(
+            'DRIVER={ODBC Driver 17 for SQL Server};'
+            'SERVER=LAPTOP_ASUS\SQLEXPRESS;'
+            'DATABASE=QLDiemSV;'
+            'UID=sa;'
+            'PWD=123123;'
+        )
+        # Tạo đối tượng để gửi lệnh đến cơ sở sữ liệu
+        cursor = conn.cursor()
+
+        # Truy vấn kiểm tra tài khoản
+        sql = "SELECT Role FROM TaiKhoan WHERE TenDangNhap=? AND MatKhauHash=?"
+        hashpwd = hashlib.sha256("123".encode()).hexdigest()    #==== chuyển mk thành dạng hash để so sánh với db
+        cursor.execute(sql, (username, hashpwd))   #Thực thi lệnh sql
+        row = cursor.fetchone()     #trả về kết quả của Role
+
+        # Nếu tài khoản có trong db
+        if row:
+            role = row[0]
+            # Nếu là admin thì mở form của admin
+            if role.lower() == "admin":
+                root.withdraw()
+            # nếu là gv thì mở form giáo viên
+            
+        else:
+            messagebox.showerror("Thông báo", "Đăng nhập thất bại. Tên đăng nhập hoặc mật khẩu không đúng!")
+                
+
+    except Exception as e:
+        messagebox.showerror("Lỗi kết nối", str(e))
+
 
 def on_forgot(event=None):
     messagebox.showinfo("Quên mật khẩu", "Hướng dẫn khôi phục mật khẩu (demo).")
