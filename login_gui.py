@@ -32,7 +32,7 @@ entry_font = font.Font(family="Times New Roman", size=15)
 button_font = font.Font(family="Times New Roman", size=18, weight="bold")
 
 # Canvas viền ngoài
-canvas = tk.Canvas(root, width=740, height=400, bg="#f9fbfc", highlightthickness=0)
+canvas = tk.Canvas(root, width=740, height=400, bg="#156bb1", highlightthickness=0)
 canvas.place(x=30, y=60)
 
 def round_rect(c, x1, y1, x2, y2, radius=20, **kwargs):
