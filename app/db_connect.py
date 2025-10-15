@@ -9,7 +9,7 @@ def get_db_connect():
             'SERVER=LAPTOP_ASUS\SQLEXPRESS;'
             'DATABASE=QLDiemSV;'
             'UID=sa;'
-            'PWD=;'
+            'PWD=123123;'
         )
         return conn
     except Exception as e:

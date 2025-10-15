@@ -12,7 +12,6 @@ GO
 -- BẢNG 1: TAIKHOAN
 -- Bảng này phải được tạo trước SinhVien và GiaoVien
 -- =============================================
-PRINT 'Đang tạo bảng TaiKhoan...';
 CREATE TABLE TaiKhoan(
 	TenDangNhap NVARCHAR(50) PRIMARY KEY,
 	MatKhauHash NVARCHAR(256) NOT NULL,
@@ -27,7 +26,6 @@ Drop table TaiKhoan
 -- =============================================
 -- BẢNG 2: SINHVIEN
 -- =============================================
-PRINT 'Đang tạo bảng SinhVien...';
 CREATE TABLE SinhVien(
 	MSSV NVARCHAR(20) PRIMARY KEY,
 	HoTen NVARCHAR(100) NOT NULL,   
@@ -50,12 +48,11 @@ GO
 -- =============================================
 -- BẢNG 3: GIAOVIEN
 -- =============================================
-PRINT 'Đang tạo bảng GiaoVien...';
 CREATE TABLE GiaoVien(
 	MaGV NVARCHAR(20) PRIMARY KEY,
-	HoTen NVARCHAR(100) NOT NULL,       -- Tăng độ dài
+	HoTen NVARCHAR(100) NOT NULL, 
 	GioiTinh NVARCHAR(10) NULL,
-	SDT NVARCHAR(15) NULL,              -- Giảm độ dài cho phù hợp
+	SDT NVARCHAR(15) NULL,    
 
 	-- Thêm cột để liên kết với TaiKhoan, không được null và phải là duy nhất
 	TenDangNhap NVARCHAR(50) NOT NULL UNIQUE,
@@ -71,19 +68,50 @@ GO
 -- =============================================
 -- BẢNG 4: MONHOC
 -- =============================================
-PRINT 'Đang tạo bảng MonHoc...';
 CREATE TABLE MonHoc(
 	MaMH NVARCHAR(20) PRIMARY KEY,
-	TenMH NVARCHAR(100) NOT NULL,       -- Tăng độ dài
+	TenMH NVARCHAR(100) NOT NULL,
 	SoTinChi INT NOT NULL,
 	MaGV NVARCHAR(20) NOT NULL,
 
-	-- Ràng buộc khóa ngoại: MaGV phải tồn tại trong bảng GiaoVien (đã đúng từ trước)
+	-- Ràng buộc khóa ngoại: MaGV phải tồn tại trong bảng GiaoVien
 	CONSTRAINT FK_MonHoc_GiaoVien FOREIGN KEY (MaGV) REFERENCES GiaoVien(MaGV)
 );
 GO
 
-PRINT 'Tất cả các bảng đã được tạo thành công!';
+-- =============================================
+-- BẢNG 5: DIEM
+-- Bảng này lưu điểm của sinh viên cho từng môn học.
+-- Khóa chính là sự kết hợp của MSSV và MaMH, đảm bảo mỗi sinh viên
+-- chỉ có một hàng điểm duy nhất cho mỗi môn học.
+-- =============================================
+CREATE TABLE Diem (
+    -- Khóa chính kết hợp (Composite Primary Key)
+    MSSV NVARCHAR(20) NOT NULL,
+    MaMH NVARCHAR(20) NOT NULL,
+	TenMH NVARCHAR(100) NOT NULL, 
+
+    -- Các cột điểm
+	TinChi INT NULL,
+	PhanTram_KT INT NULL,
+	PhanTram_Thi INT NULL,
+    DiemQuaTrinh FLOAT NULL,     -- Điểm quá trình/giữa kỳ
+    DiemThi FLOAT NULL,          -- Điểm thi cuối kỳ
+    DiemTongKet FLOAT NULL,      -- Điểm tổng kết (có thể được tính tự động)
+
+    -- Thông tin thêm
+    HocKy INT NULL,              -- Ví dụ: 1, 2
+    NamHoc NVARCHAR(20) NULL,    -- Ví dụ: '2023-2024'
+
+    -- Thiết lập khóa chính
+    CONSTRAINT PK_Diem PRIMARY KEY (MSSV, MaMH),
+
+    -- Thiết lập các khóa ngoại để liên kết
+    CONSTRAINT FK_Diem_SinhVien FOREIGN KEY (MSSV) REFERENCES SinhVien(MSSV),
+    CONSTRAINT FK_Diem_MonHoc FOREIGN KEY (MaMH) REFERENCES MonHoc(MaMH)
+);
+GO
+
 
 --Khởi tại tài khoản
 INSERT INTO TaiKhoan(TenDangNhap, MatKhauHash, Role)
@@ -96,14 +124,16 @@ VALUES
 (N'DMT234941', N'162e3973ecf8a77629bbf7c8faaf28c13f99d4e7f1affadc616731276ee1d07a', N'sinhvien'),
 (N'DTH235759', N'162e3973ecf8a77629bbf7c8faaf28c13f99d4e7f1affadc616731276ee1d07a', N'sinhvien'),
 (N'DTH235758', N'21a450ca63e673188f62d47608211457ed9f61dc8184b39c38d8fdf4b9cbaa71', N'sinhvien'),
-
+(N'DTH235829', N'114bd151f8fb0c58642d2170da4ae7d7c57977260ac2cc8905306cab6b2acabc', N'sinhvien'),
+(N'DKH234819', N'114bd151f8fb0c58642d2170da4ae7d7c57977260ac2cc8905306cab6b2acabc', N'sinhvien'),
+(N'DKH234801', N'114bd151f8fb0c58642d2170da4ae7d7c57977260ac2cc8905306cab6b2acabc', N'sinhvien');
 GO
 
 INSERT INTO SinhVien(MSSV, HoTen, NgaySinh, GioiTinh, Lop, Khoa, TenDangNhap)
 VALUES
-(N'DMT234941', N'Võ Thị Huỳnh Trân', N'2005-12-17', N'Nữ', N'DH24MT', N'Kỹ Thuật - Công nghệ - Môi Trường', N'DH24MT'),
-(N'DTH235758', N'Nguyễn Võ Thanh Sơn', N'2005-01-08', N'Nam', N'DH24TH3', N'Công nghệ thông tin', N'DTH235758'),
+(N'DMT234941', N'Võ Thị Huỳnh Trân', N'2005-12-17', N'Nữ', N'DH24MT', N'Kỹ Thuật - Công nghệ - Môi Trường', N'DMT234941'),
 (N'DTH235759', N'Nguyễn Đạt Tài', N'2005-10-27', N'Nam', N'DH24TH3', N'Công nghệ thông tin', N'DTH235759'),
+(N'DTH235758', N'Nguyễn Võ Thanh Sơn', N'2005-01-08', N'Nam', N'DH24TH3', N'Công nghệ thông tin', N'DTH235758'),
 (N'DTH235829', N'Lưu Trọng Quý', N'2004-02-01', N'Nam', N'DH24TH3', N'Công nghệ thông tin', N'DTH235829'),
 (N'DKH234819', N'Đặng Nguyễn Bảo Thiên', N'2005-02-09', N'Nam', N'DH24KH', N'Kỹ Thuật - Công nghệ - Môi Trường', N'DKH234819'),
 (N'DKH234801', N'Nguyễn Hoàng Minh Anh', N'2005-01-01', N'Nữ', N'DH24KH', N'Kỹ Thuật - Công nghệ - Môi Trường', N'DH24KH');
@@ -117,4 +147,5 @@ SELECT * FROM TaiKhoan
 SELECT * FROM SinhVien
 SELECT * FROM GiaoVien
 SELECT * FROM MonHoc
+SELECT * FROM Diem
 

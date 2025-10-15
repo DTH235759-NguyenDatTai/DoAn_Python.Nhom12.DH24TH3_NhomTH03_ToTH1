@@ -34,14 +34,14 @@ def on_login():
         if role.lower() == "admin":
             loginForm.destroy()
             adminForm.create_adminForm(username, role)
-        # nếu là gv thì mở form giáo viên
+        # nếu là sv thì mở form sinh viên
         if role == "sinhvien":
             cursor.execute("SELECT MSSV FROM SinhVien WHERE TenDangNhap=?", username)
             sv_row = cursor.fetchone()
             if sv_row:
-                sv_row = sv_row[0]
+                mssv = sv_row[0]
                 loginForm.destroy()
-                sinhVien_form.create_svForm(username)
+                sinhVien_form.create_svForm(mssv)
         
     else:
         messagebox.showerror("Thông báo", "Đăng nhập thất bại. Tên đăng nhập hoặc mật khẩu không đúng!")

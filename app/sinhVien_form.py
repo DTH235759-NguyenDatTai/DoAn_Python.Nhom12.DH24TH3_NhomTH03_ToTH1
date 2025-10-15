@@ -62,7 +62,7 @@ def create_svForm(mssv):
     columns = ("STT", "Mã Môn", "Tên Môn", "TC", "% KT", "% Thi",
             "Điểm Chuyên Cần", "Điểm Quá Trình", "Thi L1",
             "Thi L2", "Thi L3", "TK(10)", "TK(CH)")
-
+    
     table = ttk.Treeview(frame_table, columns=columns, show="headings", height=8)
 
     for col in columns:
