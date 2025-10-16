@@ -136,11 +136,11 @@ VALUES
 (N'DTH235758', N'Nguyễn Võ Thanh Sơn', N'2005-01-08', N'Nam', N'DH24TH3', N'Công nghệ thông tin', N'DTH235758'),
 (N'DTH235829', N'Lưu Trọng Quý', N'2004-02-01', N'Nam', N'DH24TH3', N'Công nghệ thông tin', N'DTH235829'),
 (N'DKH234819', N'Đặng Nguyễn Bảo Thiên', N'2005-02-09', N'Nam', N'DH24KH', N'Kỹ Thuật - Công nghệ - Môi Trường', N'DKH234819'),
-(N'DKH234801', N'Nguyễn Hoàng Minh Anh', N'2005-01-01', N'Nữ', N'DH24KH', N'Kỹ Thuật - Công nghệ - Môi Trường', N'DH24KH');
+(N'DKH234801', N'Nguyễn Hoàng Minh Anh', N'2005-01-01', N'Nữ', N'DH24KH', N'Kỹ Thuật - Công nghệ - Môi Trường', N'DKH234801');
 Go
 --Chưa insert dữ liệu
 
-DELETE From SinhVien 
+DELETE From TaiKhoan 
 
 USE QLDiemSV
 SELECT * FROM TaiKhoan

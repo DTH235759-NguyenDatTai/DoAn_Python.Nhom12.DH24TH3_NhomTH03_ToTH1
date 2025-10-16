@@ -4,13 +4,11 @@ from tkinter import messagebox
 from PIL import Image, ImageTk
 
 
-
-def create_adminForm(username, role):
-
+def create_adminForm(role):
     # ====== CỬA SỔ CHÍNH ======
     adminform = tk.Tk()
     adminform.title("Chương Trình Quản Lý Điểm Sinh Viên")
-    adminform.geometry("900x500")
+    adminform.geometry("1000x550")
     adminform.configure(bg="#f4f6f9")
 
     # ====== ĐỊNH NGHĨA FONT ======
@@ -24,67 +22,61 @@ def create_adminForm(username, role):
 
     # ====== KHUNG TRÁI ======
     frame_left = tk.Frame(adminform, bg="white", bd=1, relief="solid")
-    frame_left.place(x=30, y=40, width=250, height=400)
+    frame_left.place(x=30, y=30, width=300, height=500)
 
-    # Tiêu đề thông tin người dùng
     lbl_info = tk.Label(frame_left, text="Thông tin người dùng", bg="white", font=label_font)
-    lbl_info.pack(pady=(10, 5))
+    lbl_info.pack(pady=(15, 10))
 
-    # Dòng chào
     lbl_hello = tk.Label(frame_left, text="Xin Chào", bg="white", fg="black", font=hello_font)
     lbl_hello.pack(pady=2)
 
-    # Vai trò người dùng
-    lbl_role = tk.Label(frame_left, text=role, bg="white", fg="#0078D7", cursor="hand2", font=role_font)
+    lbl_role = tk.Label(frame_left, text=role, bg="white", fg="#0078D7", font=role_font)
     lbl_role.pack(pady=2)
 
-    # Tên người dùng
-    lbl_name = tk.Label(frame_left, text=role.upper(), bg="white", fg="#003366", font=name_font)
+    lbl_name = tk.Label(frame_left, text="ADMIN", bg="white", fg="#003366", font=name_font)
     lbl_name.pack(pady=5)
 
-    # Dòng phân cách
-    ttk.Separator(frame_left, orient="horizontal").pack(fill="x", padx=10, pady=10)
+    ttk.Separator(frame_left, orient="horizontal").pack(fill="x", padx=30, pady=15)
 
-    # Chức năng - quyền hạn
     lbl_function = tk.Label(frame_left, text="Chức năng - Quyền hạn", bg="white", font=label_font)
-    lbl_function.pack(pady=(0, 10))
+    lbl_function.pack(pady=(0, 15))
 
-    # ====== NÚT BẤM ======
-    style = ttk.Style()
-    style.configure("TButton", font=button_font, padding=6)
-    style.map("TButton", background=[("active", "#cce6ff")])
+    # ======= Tạo khung chứa các nút =======
+    btn_frame = tk.Frame(frame_left, bg="white")
+    btn_frame.pack(pady=20)
 
-    btn_add_sv = ttk.Button(frame_left, text="Thêm Sinh Viên")
-    btn_add_sv.pack(pady=5, ipadx=10)
+    # Danh sách nút và nhãn hiển thị
+    buttons = [
+        "Thêm Sinh Viên",
+        "Thêm Môn Học",
+        "Xem",
+        "Thoát"
+    ]
 
-    btn_add_mh = ttk.Button(frame_left, text="Thêm Môn Học")
-    btn_add_mh.pack(pady=5, ipadx=10)
-
-    btn_view = ttk.Button(frame_left, text="Xem")
-    btn_view.pack(pady=5, ipadx=10)
-
-    btn_exit = ttk.Button(frame_left, text="Thoát")
-    btn_exit.pack(pady=5, ipadx= 10)
+    # ======= Tạo và thêm các nút vào khung =======
+    for text in buttons:
+        btn = ttk.Button(btn_frame, text=text, width=20)
+        btn.pack(pady=8)
 
     # ====== KHUNG PHẢI (ẢNH) ======
     frame_right = tk.Frame(adminform, bg="white", bd=1, relief="solid")
-    frame_right.place(x=310, y=40, width=550, height=400)
+    frame_right.place(x=330, y=30, width=645, height=500)
 
     # Tiêu đề (đưa khoa và trường xuống dòng)
     lbl_title = tk.Label(
         frame_right,
         text="PHẦN MỀM QUẢN LÍ ĐIỂM SINH VIÊN\nKHOA CNTT - TRƯỜNG ĐẠI HỌC AN GIANG",
         bg="white",
-        fg="black",
-        font=("Times New Roman", 12, "bold"),
+        fg="red",
+        font=("Times New Roman", 16, "bold"),
         justify="center"
     )
     lbl_title.pack(pady=(10, 10))
 
     # Ảnh (đặt ảnh trong cùng thư mục)
     try:
-        image = Image.open("D:\Code\DoAn\DoAn_Python.Nhom12.DH24TH3_NhomTH03_ToTH1/images/h1.jpg")
-        image = image.resize((520, 300))
+        image = Image.open("images/agu.jpg")
+        image = image.resize((620, 450))
         img = ImageTk.PhotoImage(image)
         lbl_image = tk.Label(frame_right, image=img, bg="white")
         lbl_image.image = img
@@ -92,4 +84,3 @@ def create_adminForm(username, role):
     except Exception as e:
         lbl_error = tk.Label(frame_right, text="Không tìm thấy ảnh", fg="red", bg="white", font=label_font)
         lbl_error.pack(pady=10)
-

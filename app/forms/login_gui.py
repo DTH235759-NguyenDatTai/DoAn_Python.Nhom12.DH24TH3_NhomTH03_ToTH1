@@ -2,8 +2,9 @@ import hashlib
 import tkinter as tk
 from tkinter import font, messagebox
 import adminForm
-import sinhVien_form
 import db_connect
+import sinhVien_form
+
 
 # =====Hàm đăng nhập=====
 def on_login():
@@ -33,7 +34,7 @@ def on_login():
         # Nếu là admin thì mở form của admin
         if role.lower() == "admin":
             loginForm.destroy()
-            adminForm.create_adminForm(username, role)
+            adminForm.create_adminForm(role)
         # nếu là sv thì mở form sinh viên
         if role == "sinhvien":
             cursor.execute("SELECT MSSV FROM SinhVien WHERE TenDangNhap=?", username)
@@ -99,7 +100,7 @@ round_rect(canvas, 25, 25, 715, 375, radius=15, fill="white")
 # Frame nội dung
 frame = tk.Frame(loginForm, bg="white", width=700, height=360)
 frame.place(x=50, y=80)
-
+ 
 # Tiêu đề
 lbl_title = tk.Label(frame, text="Login", bg="white", fg="#222", font=title_font)
 lbl_title.place(relx=0.5, y=25, anchor="n")
