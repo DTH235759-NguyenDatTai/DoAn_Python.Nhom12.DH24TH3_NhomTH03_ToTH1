@@ -1,9 +1,8 @@
 import hashlib
 import tkinter as tk
 from tkinter import font, messagebox
-import adminForm
+import main_form
 import db_connect
-import sinhVien_form
 
 
 # =====Hàm đăng nhập=====
@@ -31,24 +30,11 @@ def on_login():
     # Nếu tài khoản có trong db
     if row:
         role = row[0]
-        # Nếu là admin thì mở form của admin
-        if role.lower() == "admin":
-            loginForm.destroy()
-            adminForm.create_adminForm(role)
-        # nếu là sv thì mở form sinh viên
-        if role == "sinhvien":
-            cursor.execute("SELECT MSSV FROM SinhVien WHERE TenDangNhap=?", username)
-            sv_row = cursor.fetchone()
-            if sv_row:
-                mssv = sv_row[0]
-                loginForm.destroy()
-                sinhVien_form.create_svForm(mssv)
+        loginForm.destroy()
+        main_form.create_adminForm(username, role)
         
     else:
         messagebox.showerror("Thông báo", "Đăng nhập thất bại. Tên đăng nhập hoặc mật khẩu không đúng!")
-
-    
-
 
 def on_forgot(event=None):
     messagebox.showinfo("Quên mật khẩu", "Hướng dẫn khôi phục mật khẩu (demo).")
@@ -59,7 +45,7 @@ def on_hover_in(event):
 def on_hover_out(event):
     btn_login.config(bg="white", relief="solid", bd=2)
 
-# Cửa sổ chính
+# Cửa sổ chính                  
 loginForm = tk.Tk()
 loginForm.title("Login")
 loginForm.geometry("800x520")

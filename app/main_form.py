@@ -2,9 +2,11 @@ import tkinter as tk
 from tkinter import ttk, font
 from tkinter import messagebox
 from PIL import Image, ImageTk
+from admin_gui import admin_gui
+from sinhvien_gui import sinhVien_gui
 
 
-def create_adminForm(role):
+def create_adminForm(username, role):
     # ====== CỬA SỔ CHÍNH ======
     adminform = tk.Tk()
     adminform.title("Chương Trình Quản Lý Điểm Sinh Viên")
@@ -13,7 +15,7 @@ def create_adminForm(role):
 
     # ====== ĐỊNH NGHĨA FONT ======
     label_font = font.Font(family="Times New Roman", size=12, weight="bold")
-    button_font = font.Font(family="Times New Roman", size=12, weight="bold")
+    # button_font = font.Font(family="Times New Roman", size=12, weight="bold")
 
     # Font riêng cho từng thành phần thông tin người dùng
     hello_font = font.Font(family="Times New Roman", size=14)
@@ -33,31 +35,14 @@ def create_adminForm(role):
     lbl_role = tk.Label(frame_left, text=role, bg="white", fg="#0078D7", font=role_font)
     lbl_role.pack(pady=2)
 
-    lbl_name = tk.Label(frame_left, text="ADMIN", bg="white", fg="#003366", font=name_font)
+    lbl_name = tk.Label(frame_left, text=username.upper(), bg="white", fg="#003366", font=name_font)
     lbl_name.pack(pady=5)
 
     ttk.Separator(frame_left, orient="horizontal").pack(fill="x", padx=30, pady=15)
 
     lbl_function = tk.Label(frame_left, text="Chức năng - Quyền hạn", bg="white", font=label_font)
     lbl_function.pack(pady=(0, 15))
-
-    # ======= Tạo khung chứa các nút =======
-    btn_frame = tk.Frame(frame_left, bg="white")
-    btn_frame.pack(pady=20)
-
-    # Danh sách nút và nhãn hiển thị
-    buttons = [
-        "Thêm Sinh Viên",
-        "Thêm Môn Học",
-        "Xem",
-        "Thoát"
-    ]
-
-    # ======= Tạo và thêm các nút vào khung =======
-    for text in buttons:
-        btn = ttk.Button(btn_frame, text=text, width=20)
-        btn.pack(pady=8)
-
+    
     # ====== KHUNG PHẢI (ẢNH) ======
     frame_right = tk.Frame(adminform, bg="white", bd=1, relief="solid")
     frame_right.place(x=330, y=30, width=645, height=500)
@@ -84,3 +69,25 @@ def create_adminForm(role):
     except Exception as e:
         lbl_error = tk.Label(frame_right, text="Không tìm thấy ảnh", fg="red", bg="white", font=label_font)
         lbl_error.pack(pady=10)
+
+
+    # ==========================================================================================================
+    # =========================================== Các phím chức năng ===========================================
+    # ==========================================================================================================
+
+    # Lable chứa các nút
+    btn_frame = tk.Label(frame_left, bg="white")
+    btn_frame.pack(pady=20)
+
+    # Danh sách nút và nhãn hiển thị
+    if role == "admin":
+        buttons = admin_gui.create_admin_button()
+    elif role == "sinhvien":
+        buttons = sinhVien_gui.create_sv_gui(frame_right, username)
+    else:
+        messagebox.showerror("Thông báo", "button lỗi")
+
+    # ======= Tạo và thêm các nút vào khung =======
+    for text, command in buttons:
+        btn = ttk.Button(btn_frame, text=text, width=20, command=command)
+        btn.pack(pady=8)
