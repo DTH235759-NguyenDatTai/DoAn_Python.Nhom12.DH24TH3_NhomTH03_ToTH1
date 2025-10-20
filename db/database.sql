@@ -10,7 +10,6 @@ GO
 
 -- =============================================
 -- BẢNG 1: TAIKHOAN
--- Bảng này phải được tạo trước SinhVien và GiaoVien
 -- =============================================
 CREATE TABLE TaiKhoan(
 	TenDangNhap NVARCHAR(50) PRIMARY KEY,
@@ -78,6 +77,11 @@ CREATE TABLE MonHoc(
 	CONSTRAINT FK_MonHoc_GiaoVien FOREIGN KEY (MaGV) REFERENCES GiaoVien(MaGV)
 );
 GO
+-- Thêm cột phòng học lỳ và năm học
+ALTER TABLE MonHoc
+ADD Phong NVARCHAR(50) NULL,
+    HocKy INT NULL,              -- Ví dụ: 1, 2
+    NamHoc NVARCHAR(20) NULL;
 
 -- =============================================
 -- BẢNG 5: DIEM
@@ -116,11 +120,11 @@ GO
 --Khởi tại tài khoản
 INSERT INTO TaiKhoan(TenDangNhap, MatKhauHash, Role)
 VALUES
-(N'admin', N'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3', N'admin'),
-(N'gv001', N'da70dfa4d9f95ac979f921e8e623358236313f334afcd06cddf8a5621cf6a1e9', N'giaovien'),
-(N'gv002', N'da70dfa4d9f95ac979f921e8e623358236313f334afcd06cddf8a5621cf6a1e9', N'giaovien'),
-(N'gv003', N'da70dfa4d9f95ac979f921e8e623358236313f334afcd06cddf8a5621cf6a1e9', N'giaovien'),
-(N'gv004', N'da70dfa4d9f95ac979f921e8e623358236313f334afcd06cddf8a5621cf6a1e9', N'giaovien'),
+(N'ADMIN', N'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3', N'admin'),
+(N'GV001', N'da70dfa4d9f95ac979f921e8e623358236313f334afcd06cddf8a5621cf6a1e9', N'giaovien'),
+(N'GV002', N'da70dfa4d9f95ac979f921e8e623358236313f334afcd06cddf8a5621cf6a1e9', N'giaovien'),
+(N'GV003', N'da70dfa4d9f95ac979f921e8e623358236313f334afcd06cddf8a5621cf6a1e9', N'giaovien'),
+(N'GV004', N'da70dfa4d9f95ac979f921e8e623358236313f334afcd06cddf8a5621cf6a1e9', N'giaovien'),
 (N'DMT234941', N'162e3973ecf8a77629bbf7c8faaf28c13f99d4e7f1affadc616731276ee1d07a', N'sinhvien'),
 (N'DTH235759', N'162e3973ecf8a77629bbf7c8faaf28c13f99d4e7f1affadc616731276ee1d07a', N'sinhvien'),
 (N'DTH235758', N'21a450ca63e673188f62d47608211457ed9f61dc8184b39c38d8fdf4b9cbaa71', N'sinhvien'),
@@ -128,6 +132,7 @@ VALUES
 (N'DKH234819', N'114bd151f8fb0c58642d2170da4ae7d7c57977260ac2cc8905306cab6b2acabc', N'sinhvien'),
 (N'DKH234801', N'114bd151f8fb0c58642d2170da4ae7d7c57977260ac2cc8905306cab6b2acabc', N'sinhvien');
 GO
+
 
 INSERT INTO SinhVien(MSSV, HoTen, NgaySinh, GioiTinh, Lop, Khoa, TenDangNhap)
 VALUES
@@ -139,8 +144,6 @@ VALUES
 (N'DKH234801', N'Nguyễn Hoàng Minh Anh', N'2005-01-01', N'Nữ', N'DH24KH', N'Kỹ Thuật - Công nghệ - Môi Trường', N'DKH234801');
 Go
 --Chưa insert dữ liệu
-
-DELETE From TaiKhoan 
 
 USE QLDiemSV
 SELECT * FROM TaiKhoan

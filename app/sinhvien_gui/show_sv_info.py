@@ -3,7 +3,7 @@ from tkinter import ttk
 from tkinter import messagebox
 from db_connect import get_db_connect
 
-def show(frame_right, username):
+def show_info(frame_right, username):
     # Xóa nội dung cũ
     for widget in frame_right.winfo_children():
         widget.destroy()
@@ -16,11 +16,11 @@ def show(frame_right, username):
         fg="darkred",
         bg="white"
     )
-    lbl_title.pack(pady=10)
+    lbl_title.pack(pady=5)
 
     # ====== Khung màu xanh (viền bao) ======
     outer_frame = tk.Frame(frame_right, bg="#cce6ff", bd=3, relief="ridge")
-    outer_frame.pack(padx=15, pady=15, fill="both", expand=True)
+    outer_frame.pack(padx=15, pady=5, fill="both", expand=True)
 
     # ====== Nền trắng bên trong (chứa nội dung) ======
     inner_frame = tk.Frame(outer_frame, bg="white")

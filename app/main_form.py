@@ -6,12 +6,13 @@ from admin_gui import admin_gui
 from sinhvien_gui import sinhVien_gui
 
 
-def create_adminForm(username, role):
-    # ====== CỬA SỔ CHÍNH ======
-    adminform = tk.Tk()
-    adminform.title("Chương Trình Quản Lý Điểm Sinh Viên")
-    adminform.geometry("1000x550")
-    adminform.configure(bg="#f4f6f9")
+# ====== CỬA SỔ CHÍNH ======
+mainform = tk.Tk()
+mainform.title("Chương Trình Quản Lý Điểm Sinh Viên")
+mainform.geometry("1000x550")
+mainform.configure(bg="#f4f6f9")
+
+def create_mainForm(username, role):
 
     # ====== ĐỊNH NGHĨA FONT ======
     label_font = font.Font(family="Times New Roman", size=12, weight="bold")
@@ -23,7 +24,7 @@ def create_adminForm(username, role):
     name_font = font.Font(family="Times New Roman", size=12, weight="bold")
 
     # ====== KHUNG TRÁI ======
-    frame_left = tk.Frame(adminform, bg="white", bd=1, relief="solid")
+    frame_left = tk.Frame(mainform, bg="white", bd=1, relief="solid")
     frame_left.place(x=30, y=30, width=300, height=500)
 
     lbl_info = tk.Label(frame_left, text="Thông tin người dùng", bg="white", font=label_font)
@@ -44,7 +45,7 @@ def create_adminForm(username, role):
     lbl_function.pack(pady=(0, 15))
     
     # ====== KHUNG PHẢI (ẢNH) ======
-    frame_right = tk.Frame(adminform, bg="white", bd=1, relief="solid")
+    frame_right = tk.Frame(mainform, bg="white", bd=1, relief="solid")
     frame_right.place(x=330, y=30, width=645, height=500)
 
     # Tiêu đề (đưa khoa và trường xuống dòng)
@@ -60,7 +61,7 @@ def create_adminForm(username, role):
 
     # Ảnh (đặt ảnh trong cùng thư mục)
     try:
-        image = Image.open("images/agu.jpg")
+        image = Image.open("DoAn_Python.Nhom12.DH24TH3_NhomTH03_ToTH1/images/agu.jpg")
         image = image.resize((620, 450))
         img = ImageTk.PhotoImage(image)
         lbl_image = tk.Label(frame_right, image=img, bg="white")
@@ -81,9 +82,10 @@ def create_adminForm(username, role):
 
     # Danh sách nút và nhãn hiển thị
     if role == "admin":
-        buttons = admin_gui.create_admin_button()
+        buttons = admin_gui.create_admin_button(frame_right, username)
     elif role == "sinhvien":
         buttons = sinhVien_gui.create_sv_gui(frame_right, username)
+
     else:
         messagebox.showerror("Thông báo", "button lỗi")
 
@@ -91,3 +93,6 @@ def create_adminForm(username, role):
     for text, command in buttons:
         btn = ttk.Button(btn_frame, text=text, width=20, command=command)
         btn.pack(pady=8)
+
+create_mainForm("admin", "admin")
+mainform.mainloop()

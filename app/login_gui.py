@@ -24,14 +24,14 @@ def on_login():
     # Truy vấn kiểm tra tài khoản
     sql = "SELECT Role FROM TaiKhoan WHERE TenDangNhap=? AND MatKhauHash=?"
     hashpwd = hashlib.sha256(password.encode()).hexdigest()    # Chuyển mk thành dạng hash để so sánh với db
-    cursor.execute(sql, (username, hashpwd))   #Thực thi lệnh sql
+    cursor.execute(sql, (username.upper(), hashpwd))   #Thực thi lệnh sql
     row = cursor.fetchone()     #trả về kết quả của Role
 
     # Nếu tài khoản có trong db
     if row:
         role = row[0]
         loginForm.destroy()
-        main_form.create_adminForm(username, role)
+        main_form.create_mainForm(username, role)
         
     else:
         messagebox.showerror("Thông báo", "Đăng nhập thất bại. Tên đăng nhập hoặc mật khẩu không đúng!")
