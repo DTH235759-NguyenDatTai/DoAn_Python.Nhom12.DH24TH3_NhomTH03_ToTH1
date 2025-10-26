@@ -7,7 +7,7 @@ def get_db_connect():
         conn = pyodbc.connect(
             'DRIVER={ODBC Driver 17 for SQL Server};'
             'SERVER=LAPTOP_ASUS\SQLEXPRESS;'
-            'DATABASE=QLDiemSV;'
+            'DATABASE=QL_Diem;'
             'UID=sa;'
             'PWD=123123;'
         )

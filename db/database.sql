@@ -1,11 +1,6 @@
-﻿CREATE DATABASE QLDiemSV
-GO
+﻿CREATE DATABASE QL_Diem
 
-USE QLDiemSV
-GO
-
--- Luôn đảm bảo bạn đang sử dụng đúng cơ sở dữ liệu
-USE QLDiemSV;
+USE QL_Diem
 GO
 
 -- =============================================
@@ -17,10 +12,9 @@ CREATE TABLE TaiKhoan(
 	Role NVARCHAR(10) NOT NULL,
 
 	-- Thêm ràng buộc CHECK để đảm bảo Role chỉ nhận các giá trị hợp lệ
-	CONSTRAINT CK_TaiKhoan_Role CHECK (Role IN ('admin', 'giaovien', 'sinhvien'))
+	CONSTRAINT CK_TaiKhoan_Role CHECK (Role IN ('admin', 'giangvien', 'sinhvien'))
 );
 GO
-Drop table TaiKhoan
 
 -- =============================================
 -- BẢNG 2: SINHVIEN
@@ -45,22 +39,21 @@ CREATE TABLE SinhVien(
 GO
 
 -- =============================================
--- BẢNG 3: GIAOVIEN
+-- BẢNG 3: GIANGVIEN
 -- =============================================
-CREATE TABLE GiaoVien(
+CREATE TABLE GiangVien(
 	MaGV NVARCHAR(20) PRIMARY KEY,
 	HoTen NVARCHAR(100) NOT NULL, 
-	GioiTinh NVARCHAR(10) NULL,
-	SDT NVARCHAR(15) NULL,    
+	GioiTinh NVARCHAR(10) NULL, 
 
 	-- Thêm cột để liên kết với TaiKhoan, không được null và phải là duy nhất
 	TenDangNhap NVARCHAR(50) NOT NULL UNIQUE,
 
 	-- Ràng buộc CHECK cho Giới tính
-	CONSTRAINT CK_GiaoVien_GioiTinh CHECK (GioiTinh IN (N'Nam', N'Nữ', N'Khác')),
+	CONSTRAINT CK_GiangVien_GioiTinh CHECK (GioiTinh IN (N'Nam', N'Nữ')),
 
 	-- Ràng buộc khóa ngoại: TenDangNhap phải tồn tại trong bảng TaiKhoan
-	CONSTRAINT FK_GiaoVien_TaiKhoan FOREIGN KEY (TenDangNhap) REFERENCES TaiKhoan(TenDangNhap)
+	CONSTRAINT FK_GiangVien_TaiKhoan FOREIGN KEY (TenDangNhap) REFERENCES TaiKhoan(TenDangNhap)
 );
 GO
 
@@ -71,17 +64,14 @@ CREATE TABLE MonHoc(
 	MaMH NVARCHAR(20) PRIMARY KEY,
 	TenMH NVARCHAR(100) NOT NULL,
 	SoTinChi INT NOT NULL,
+	Phong NVARCHAR(50) NULL,
+    HocKy INT NULL,              -- Ví dụ: 1, 2
+    NamHoc NVARCHAR(20) NULL,
 	MaGV NVARCHAR(20) NOT NULL,
-
 	-- Ràng buộc khóa ngoại: MaGV phải tồn tại trong bảng GiaoVien
-	CONSTRAINT FK_MonHoc_GiaoVien FOREIGN KEY (MaGV) REFERENCES GiaoVien(MaGV)
+	CONSTRAINT FK_MonHoc_GiangVien FOREIGN KEY (MaGV) REFERENCES GiangVien(MaGV)
 );
 GO
--- Thêm cột phòng học lỳ và năm học
-ALTER TABLE MonHoc
-ADD Phong NVARCHAR(50) NULL,
-    HocKy INT NULL,              -- Ví dụ: 1, 2
-    NamHoc NVARCHAR(20) NULL;
 
 -- =============================================
 -- BẢNG 5: DIEM
@@ -99,13 +89,13 @@ CREATE TABLE Diem (
 	TinChi INT NULL,
 	PhanTram_KT INT NULL,
 	PhanTram_Thi INT NULL,
-    DiemQuaTrinh FLOAT NULL,     -- Điểm quá trình/giữa kỳ
-    DiemThi FLOAT NULL,          -- Điểm thi cuối kỳ
-    DiemTongKet FLOAT NULL,      -- Điểm tổng kết (có thể được tính tự động)
+    DiemQuaTrinh FLOAT NULL,
+    DiemThi FLOAT NULL,  
+    DiemTongKet FLOAT NULL, 
 
     -- Thông tin thêm
-    HocKy INT NULL,              -- Ví dụ: 1, 2
-    NamHoc NVARCHAR(20) NULL,    -- Ví dụ: '2023-2024'
+    HocKy INT NULL,       
+    NamHoc NVARCHAR(20) NULL,    
 
     -- Thiết lập khóa chính
     CONSTRAINT PK_Diem PRIMARY KEY (MSSV, MaMH),
@@ -116,15 +106,17 @@ CREATE TABLE Diem (
 );
 GO
 
+--Khởi tại Giá trị
 
---Khởi tại tài khoản
 INSERT INTO TaiKhoan(TenDangNhap, MatKhauHash, Role)
 VALUES
 (N'ADMIN', N'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3', N'admin'),
-(N'GV001', N'da70dfa4d9f95ac979f921e8e623358236313f334afcd06cddf8a5621cf6a1e9', N'giaovien'),
-(N'GV002', N'da70dfa4d9f95ac979f921e8e623358236313f334afcd06cddf8a5621cf6a1e9', N'giaovien'),
-(N'GV003', N'da70dfa4d9f95ac979f921e8e623358236313f334afcd06cddf8a5621cf6a1e9', N'giaovien'),
-(N'GV004', N'da70dfa4d9f95ac979f921e8e623358236313f334afcd06cddf8a5621cf6a1e9', N'giaovien'),
+(N'GV001', N'da70dfa4d9f95ac979f921e8e623358236313f334afcd06cddf8a5621cf6a1e9', N'giangvien'),
+(N'GV002', N'da70dfa4d9f95ac979f921e8e623358236313f334afcd06cddf8a5621cf6a1e9', N'giangvien'),
+(N'GV003', N'da70dfa4d9f95ac979f921e8e623358236313f334afcd06cddf8a5621cf6a1e9', N'giangvien'),
+(N'GV004', N'da70dfa4d9f95ac979f921e8e623358236313f334afcd06cddf8a5621cf6a1e9', N'giangvien'),
+(N'GV005', N'da70dfa4d9f95ac979f921e8e623358236313f334afcd06cddf8a5621cf6a1e9', N'giangvien'),
+(N'GV006', N'da70dfa4d9f95ac979f921e8e623358236313f334afcd06cddf8a5621cf6a1e9', N'giangvien'),
 (N'DMT234941', N'162e3973ecf8a77629bbf7c8faaf28c13f99d4e7f1affadc616731276ee1d07a', N'sinhvien'),
 (N'DTH235759', N'162e3973ecf8a77629bbf7c8faaf28c13f99d4e7f1affadc616731276ee1d07a', N'sinhvien'),
 (N'DTH235758', N'21a450ca63e673188f62d47608211457ed9f61dc8184b39c38d8fdf4b9cbaa71', N'sinhvien'),
@@ -132,7 +124,6 @@ VALUES
 (N'DKH234819', N'114bd151f8fb0c58642d2170da4ae7d7c57977260ac2cc8905306cab6b2acabc', N'sinhvien'),
 (N'DKH234801', N'114bd151f8fb0c58642d2170da4ae7d7c57977260ac2cc8905306cab6b2acabc', N'sinhvien');
 GO
-
 
 INSERT INTO SinhVien(MSSV, HoTen, NgaySinh, GioiTinh, Lop, Khoa, TenDangNhap)
 VALUES
@@ -143,12 +134,38 @@ VALUES
 (N'DKH234819', N'Đặng Nguyễn Bảo Thiên', N'2005-02-09', N'Nam', N'DH24KH', N'Kỹ Thuật - Công nghệ - Môi Trường', N'DKH234819'),
 (N'DKH234801', N'Nguyễn Hoàng Minh Anh', N'2005-01-01', N'Nữ', N'DH24KH', N'Kỹ Thuật - Công nghệ - Môi Trường', N'DKH234801');
 Go
---Chưa insert dữ liệu
 
-USE QLDiemSV
+INSERT INTO GiangVien(MaGV,HoTen, GioiTinh, TenDangNhap)
+VALUES
+(N'GV001', N'H.T.Việt', N'Nam', N'GV001'),
+(N'GV002', N'P.V.L.Em', N'Nam', N'GV002'),
+(N'GV003', N'N.T.L.Quyên', N'Nữ', N'GV003'),
+(N'GV004', N'N.T.N.Loan', N'Nữ', N'GV004'),
+(N'GV005', N'L.V.Dót', N'Nam', N'GV005'),
+(N'GV006', N'H.T.Thành', N'Nam', N'GV006');
+Go
+
+INSERT INTO MonHoc(MaMH, TenMH, SoTinChi, Phong, HocKy, NamHoc, Nhom, MaGV)
+VALUES
+(N'PHY109', N'Vật lý đại cương', N'4', 'NA101', '1', '2023-2024', '2', N'GV005'),
+(N'TEC511', N'Hóa đại cương', N'4', 'NA201', '1', '2023-2024', '1', N'GV006'),
+(N'MAT104', N'Toán A1', N'3', 'ND101', '1', '2023-2024', '3', N'GV002'),
+(N'COS106', N'Lập trình căn bản', N'3', 'ND401', '1', '2023-2024', '1', N'GV001'),
+(N'PHT154', N'Bóng chuyền 1', N'3', 'ND309', '2', '2023-2024', '3', N'GV004'),
+(N'PHI104', N'Triết học Mác-Lenin', N'2', 'ND202', '2', '2023-2024', '5', N'GV005'),
+(N'MAT105', N'Toán A2', N'3', 'NA303', '2', '2023-2024', '2', N'GV002'),
+(N'MAT106', N'Toán A3', N'3', 'NA303', '1', '2024-2025', '5', N'GV002'),
+(N'MAX309', N'Kinh tế chính trị Mác-Lenin', N'2', 'NC203', '1', '2024-2025', '3', N'GV005'),
+(N'MAX310', N'Chủ nghĩa xã hội', N'2', 'NA303', '2', '2024-2025', '2', N'GV003'),
+(N'PRS302', N'Xác xuất thống kê', N'3', 'ND403', '2', '2024-2025', '1', N'GV003');
+GO
+
+
+USE QL_Diem
 SELECT * FROM TaiKhoan
+SELECT * FROM GiangVien
 SELECT * FROM SinhVien
-SELECT * FROM GiaoVien
 SELECT * FROM MonHoc
 SELECT * FROM Diem
 
+DELETE MonHoc WHERE MaMH = 'CON503'

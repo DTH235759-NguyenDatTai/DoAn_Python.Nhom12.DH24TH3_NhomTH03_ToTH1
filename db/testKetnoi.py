@@ -4,7 +4,7 @@ try:
     conn = pyodbc.connect(
         'DRIVER={ODBC Driver 17 for SQL Server};'
         'SERVER=LAPTOP_ASUS\\SQLEXPRESS;'
-        'DATABASE=QLDiemSV;'
+        'DATABASE=QL_Diem;'
         'Trusted_Connection=yes;'
     )
 

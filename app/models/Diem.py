@@ -1,4 +1,4 @@
-from app.forms import db_connect
+import db_connect
 
 class Diem:
     def __init__(self, mssv, ma_mh, ten_mh = None, tin_chi = None, pt_kt = None, pt_thi = None, diem_qt = None, diem_thi = None, hoc_ky = None, nam_hoc = None):

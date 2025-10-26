@@ -4,15 +4,15 @@ from tkinter import messagebox
 from PIL import Image, ImageTk
 from admin_gui import admin_gui
 from sinhvien_gui import sinhVien_gui
-
-
-# ====== CỬA SỔ CHÍNH ======
-mainform = tk.Tk()
-mainform.title("Chương Trình Quản Lý Điểm Sinh Viên")
-mainform.geometry("1000x550")
-mainform.configure(bg="#f4f6f9")
+from giangvien_gui import giangVien_gui
 
 def create_mainForm(username, role):
+
+    # ====== CỬA SỔ CHÍNH ======
+    mainform = tk.Tk()
+    mainform.title("Chương Trình Quản Lý Điểm Sinh Viên")
+    mainform.geometry("1000x550")
+    mainform.configure(bg="#f4f6f9")
 
     # ====== ĐỊNH NGHĨA FONT ======
     label_font = font.Font(family="Times New Roman", size=12, weight="bold")
@@ -61,7 +61,7 @@ def create_mainForm(username, role):
 
     # Ảnh (đặt ảnh trong cùng thư mục)
     try:
-        image = Image.open("DoAn_Python.Nhom12.DH24TH3_NhomTH03_ToTH1/images/agu.jpg")
+        image = Image.open("images/agu.jpg")
         image = image.resize((620, 450))
         img = ImageTk.PhotoImage(image)
         lbl_image = tk.Label(frame_right, image=img, bg="white")
@@ -70,7 +70,6 @@ def create_mainForm(username, role):
     except Exception as e:
         lbl_error = tk.Label(frame_right, text="Không tìm thấy ảnh", fg="red", bg="white", font=label_font)
         lbl_error.pack(pady=10)
-
 
     # ==========================================================================================================
     # =========================================== Các phím chức năng ===========================================
@@ -83,9 +82,10 @@ def create_mainForm(username, role):
     # Danh sách nút và nhãn hiển thị
     if role == "admin":
         buttons = admin_gui.create_admin_button(frame_right, username)
+    elif role == "giangvien":
+        buttons = giangVien_gui.create_gv_form(frame_right)
     elif role == "sinhvien":
         buttons = sinhVien_gui.create_sv_gui(frame_right, username)
-
     else:
         messagebox.showerror("Thông báo", "button lỗi")
 
@@ -93,6 +93,6 @@ def create_mainForm(username, role):
     for text, command in buttons:
         btn = ttk.Button(btn_frame, text=text, width=20, command=command)
         btn.pack(pady=8)
-
+    # Chạy test 
+    mainform.mainloop()
 create_mainForm("admin", "admin")
-mainform.mainloop()
