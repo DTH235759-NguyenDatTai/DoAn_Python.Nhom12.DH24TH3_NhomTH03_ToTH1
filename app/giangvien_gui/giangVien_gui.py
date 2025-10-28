@@ -6,6 +6,6 @@ def create_gv_form(frame_right):
 
     buttons = [
         ("Xem điểm", lambda: messagebox.showinfo("Thông báo", "Chức năng đang phát triển")),
-        ("thoát", exit_app)
+        ("Thoát", exit_app)
     ]
-    return buttons
+    return buttons 

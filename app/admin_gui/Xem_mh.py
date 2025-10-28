@@ -2,6 +2,9 @@ import tkinter as tk
 from tkinter import ttk
 
 def xem_mh(frame_right):
+    # ===== Xóa nội dung cũ =====
+    for widget in frame_right.winfo_children():
+        widget.destroy()
     # Tạo bảng gồm có các cột thông tin của môn học và có thể xem danh sách sinh viên trong đó
 
     table_frame = tk.Frame(frame_right, bg="white", bd=2, relief="groove")

@@ -10,54 +10,33 @@ def add_mh(frame_right):
     frame_right.configure(bg="white")
 
     # ===== Tiêu đề =====
-    lbl_title = tk.Label(
-        frame_right,
-        text="THÊM MÔN HỌC",
-        font=("Times New Roman", 16, "bold"),
-        fg="darkred",
-        bg="white"
+    lbl_title = tk.Label(frame_right, text="THÊM MÔN HỌC",
+        font=("Times New Roman", 16, "bold"), fg="darkred", bg="white"
     )
     lbl_title.pack(pady=5)
 
     # ==========================================================
-    # ===== KHUNG NHẬP LIỆU =====
+    # ===================== KHUNG NHẬP LIỆU ====================
     # ==========================================================
     input_frame = tk.Frame(frame_right, bg="white", bd=2, relief="groove")
     input_frame.pack(padx=5, pady=5, fill="x")
 
-    # ==== Hàng 1 ====
     tk.Label(input_frame, text="Mã môn học:", font=("Times New Roman", 12, "bold"), bg="white").grid(row=0, column=0, padx=5, pady=6, sticky="e")
     entry_mamh = tk.Entry(input_frame, font=("Times New Roman", 12), width=22)
     entry_mamh.grid(row=0, column=1, padx=5, pady=6, ipady=2, sticky="w")
 
-    tk.Label(input_frame, text="Học kỳ:", font=("Times New Roman", 12, "bold"), bg="white").grid(row=0, column=2, padx=5, pady=6, sticky="e")
-    cb_hocky = ttk.Combobox(input_frame, values=["1", "2", "Hè"], font=("Times New Roman", 12), width=18)
-    cb_hocky.grid(row=0, column=3, padx=5, pady=6, ipady=2, sticky="w")
-
-    # ==== Hàng 2 ====
     tk.Label(input_frame, text="Tên môn học:", font=("Times New Roman", 12, "bold"), bg="white").grid(row=1, column=0, padx=5, pady=6, sticky="e")
     entry_tenmh = tk.Entry(input_frame, font=("Times New Roman", 12), width=22)
     entry_tenmh.grid(row=1, column=1, padx=5, pady=6, ipady=2, sticky="w")
 
-    tk.Label(input_frame, text="Năm học:", font=("Times New Roman", 12, "bold"), bg="white").grid(row=1, column=2, padx=5, pady=6, sticky="e")
-    cb_namhoc = ttk.Combobox(input_frame, values=["2024-2025", "2025-2026"], font=("Times New Roman", 12), width=18)
-    cb_namhoc.grid(row=1, column=3, padx=5, pady=6, ipady=2, sticky="w")
-
-    # ==== Hàng 3 ====
     tk.Label(input_frame, text="Số tín chỉ:", font=("Times New Roman", 12, "bold"), bg="white").grid(row=2, column=0, padx=5, pady=6, sticky="e")
     entry_stc = tk.Entry(input_frame, font=("Times New Roman", 12), width=22)
     entry_stc.grid(row=2, column=1, padx=5, pady=6, ipady=2, sticky="w")
 
-    tk.Label(input_frame, text="Mã GV:", font=("Times New Roman", 12, "bold"), bg="white").grid(row=2, column=2, padx=5, pady=6, sticky="e")
-    entry_magv = tk.Entry(input_frame, font=("Times New Roman", 12), width=18)
-    entry_magv.grid(row=2, column=3, padx=5, pady=6, ipady=2, sticky="w")
-
-    # ==== Hàng 4 ====
-    tk.Label(input_frame, text="Phòng:", font=("Times New Roman", 12, "bold"), bg="white").grid(row=3, column=0, padx=5, pady=6, sticky="e")
-    entry_phong = tk.Entry(input_frame, font=("Times New Roman", 12), width=22)
-    entry_phong.grid(row=3, column=1, padx=5, pady=6, ipady=2, sticky="w")
-
-    # ======= Nút chức năng ======
+    # ==========================================================
+    # ===================== NÚT CHỨC NĂNG ======================
+    # ==========================================================
+    
     btn_frame = tk.Frame(frame_right, bg="white")
     btn_frame.pack(pady=10)
     # Nút
@@ -65,10 +44,14 @@ def add_mh(frame_right):
     ttk.Button(btn_frame, text="Sửa", width=20, command=lambda: Sua()).grid(row=0, column=1, padx=10)
     ttk.Button(btn_frame, text="Xóa", width=20, command=lambda: Xoa()).grid(row=0, column=2, padx=10)
 
+    # ==========================================================
+    # ================= BẢNG HIỂN THỊ DỮ LIỆU ==================
+    # ==========================================================
+
     table_frame = tk.Frame(frame_right, bg="white", bd=2, relief="groove")
     table_frame.pack(padx=5, pady=5, fill="both", expand=True)
 
-    columns = ("ma_mh", "ten_mh", "so_tc", "phong", "hoc_ky", "nam_hoc", "ma_gv")
+    columns = ("ma_mh", "ten_mh", "so_tc")
 
     tree = ttk.Treeview(table_frame, columns=columns, show="headings")
 
@@ -95,50 +78,32 @@ def add_mh(frame_right):
     tree.heading("so_tc", text="Số TC")
     tree.column("so_tc", width=50, anchor="center")
 
-    tree.heading("phong", text="Phòng")
-    tree.column("phong", width=100, anchor="center")
-
-    tree.heading("hoc_ky", text="Học kỳ")
-    tree.column("hoc_ky", width=50, anchor="center")
-
-    tree.heading("nam_hoc", text="Năm học")
-    tree.column("nam_hoc", width=80, anchor="center")
-
-    tree.heading("ma_gv", text="Mã GV")
-    tree.column("ma_gv", width=80, anchor="center")
-
-
     # ==========================================================
     # ===================== HÀM CHỨC NĂNG ======================
     # ==========================================================
 
+    conn = get_db_connect()
+    if conn is None:
+        return
+    cursor = conn.cursor()
+    
     def TaiDuLieu():
         for item in tree.get_children():
             tree.delete(item)
-        conn = get_db_connect()
-        if conn is None:
-            return
-        cursor = conn.cursor()
         try:
-            cursor.execute("SELECT MaMH, TenMH, SoTinChi, Phong, HocKy, NamHoc, MaGV FROM MonHoc")
+            cursor.execute("SELECT * FROM MonHoc")
             rows = cursor.fetchall()
             for row in rows:
                 tree.insert("", "end", values=tuple(row))
         except Exception as e:
             messagebox.showerror("Lỗi", str(e))
-        finally:
-            conn.close()
 
     def Them():
         ma_mh = entry_mamh.get().strip()
         ten_mh = entry_tenmh.get().strip()
         so_tc = entry_stc.get().strip()
-        phong = entry_phong.get().strip()
-        hoc_ky = cb_hocky.get().strip()
-        nam_hoc = cb_namhoc.get().strip()
-        ma_gv = entry_magv.get().strip()
 
-        if not all([ma_mh, ten_mh, so_tc, phong, hoc_ky, nam_hoc, ma_gv]):
+        if not all([ma_mh, ten_mh, so_tc]):
             messagebox.showwarning("Thiếu thông tin", "Vui lòng nhập đầy đủ thông tin.")
             return
 
@@ -153,9 +118,9 @@ def add_mh(frame_right):
             return
         cursor = conn.cursor()
         try:
-            sql = """INSERT INTO MonHoc (MaMH, TenMH, SoTinChi, Phong, HocKy, NamHoc, MaGV)
-                     VALUES (?, ?, ?, ?, ?, ?, ?)"""
-            cursor.execute(sql, (ma_mh, ten_mh, so_tc, phong, hoc_ky, nam_hoc, ma_gv))
+            sql = """INSERT INTO MonHoc (MaMH, TenMH, SoTinChi)
+                     VALUES (?, ?, ?)"""
+            cursor.execute(sql, (ma_mh, ten_mh, so_tc))
             conn.commit()
             messagebox.showinfo("Thành công", "Thêm môn học thành công.")
             TaiDuLieu()
@@ -192,12 +157,8 @@ def add_mh(frame_right):
         ma_mh = tree.item(selected[0], "values")[0]
         ten_mh = entry_tenmh.get().strip()
         so_tc = entry_stc.get().strip()
-        phong = entry_phong.get().strip()
-        hoc_ky = cb_hocky.get().strip()
-        nam_hoc = cb_namhoc.get().strip()
-        ma_gv = entry_magv.get().strip()
 
-        if not all([ten_mh, so_tc, phong, hoc_ky, nam_hoc, ma_gv]):
+        if not all([ten_mh, so_tc]):
             messagebox.showwarning("Thiếu thông tin", "Vui lòng nhập đầy đủ thông tin.")
             return
 
@@ -214,9 +175,9 @@ def add_mh(frame_right):
         try:
             cursor.execute("""
                 UPDATE MonHoc
-                SET TenMH=?, SoTinChi=?, Phong=?, HocKy=?, NamHoc=?, MaGV=?
+                SET TenMH=?, SoTinChi=?
                 WHERE MaMH=?
-            """, (ten_mh, so_tc, phong, hoc_ky, nam_hoc, ma_gv, ma_mh))
+            """, (ten_mh, so_tc, ma_mh))
             conn.commit()
             messagebox.showinfo("Thành công", "Cập nhật thành công.")
             TaiDuLieu()
