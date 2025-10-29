@@ -7,7 +7,7 @@ def add_sv(frame_right):
     for widget in frame_right.winfo_children():
         widget.destroy()
 
-        # ======= Tiêu đề =======
+    # ======= Tiêu đề =======
     lbl_title = tk.Label(
         frame_right, text="THÊM SINH VIÊN VÀO HỌC PHẦN", font=("Times New Roman", 16, "bold"),
         fg="darkred", bg="white"
@@ -21,10 +21,18 @@ def add_sv(frame_right):
     input_frame = tk.Frame(frame_right, bg="white", bd=2, relief="groove")
     input_frame.pack(padx=5, pady=5, fill="x")
 
-    tk.Label(input_frame, text="Chọn học phần:", font=("Times New Roman", 12, "bold")).grid(row=1, column=0, sticky="e", padx=5, pady=5)
-    cb_hp = ttk.Combobox(input_frame, font=("Times New Roman", 12), width=25,
-                            values=["HP001", "HP002", "HP003"])
+    tk.Label(input_frame, text="Chọn học phần:", font=("Times New Roman", 12, "bold"), bg="white").grid(row=1, column=0, sticky="e", padx=5, pady=5)
+    cb_hp = ttk.Combobox(input_frame, font=("Times New Roman", 12), width=25)
     cb_hp.grid(row=1, column=1, padx=5, pady=5, sticky="w")
+
+    # Lấy danh sách học phần từ SQL
+    conn = get_db_connect()
+    if conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT MaHP FROM HocPhan")
+        hp_list = [row[0] for row in cursor.fetchall()]
+        cb_hp["values"] = hp_list
+        conn.close()
 
     # ==========================================================
     # ===================== NÚT CHỨC NĂNG ======================
@@ -32,10 +40,9 @@ def add_sv(frame_right):
 
     btn_frame = tk.Frame(frame_right, bg="white")
     btn_frame.pack(pady=10)
-    # Nút
-    ttk.Button(btn_frame, text="Thêm sinh viên", width=20, command=lambda: Them()).grid(row=0, column=0, padx=10)
-    ttk.Button(btn_frame, text="Sửa", width=20, command=lambda: Sua()).grid(row=0, column=1, padx=10)
-    ttk.Button(btn_frame, text="Xóa", width=20, command=lambda: Xoa()).grid(row=0, column=2, padx=10)
+    ttk.Button(btn_frame, text="Xem danh sách SV", width=20, command=lambda: TaiDuLieu()).grid(row=0, column=0, padx=10)
+    ttk.Button(btn_frame, text="Thêm sinh viên", width=20, command=lambda: open_add_sv_frame()).grid(row=0, column=1, padx=10)
+    ttk.Button(btn_frame, text="Xóa sinh viên", width=20, command=lambda: Xoa()).grid(row=0, column=2, padx=10)
 
     # ==========================================================
     # ================= BẢNG HIỂN THỊ DỮ LIỆU ==================
@@ -43,155 +50,150 @@ def add_sv(frame_right):
 
     table_frame = tk.Frame(frame_right, bg="white", bd=2, relief="groove")
     table_frame.pack(padx=5, pady=5, fill="both", expand=True)
-
-    # Cho phép bảng co giãn
     table_frame.grid_rowconfigure(0, weight=1)
     table_frame.grid_columnconfigure(0, weight=1)
 
-    cot = ("MSSV", "Họ Tên", "Ngày Sinh", "Giới Tính", "Lớp", "Khoa")
-    tree =ttk.Treeview(table_frame, columns=cot, show="headings")
+    cot = ("MSSV", "Họ tên", "Lớp", "Khoa")
+    tree = ttk.Treeview(table_frame, columns=cot, show="headings")
 
     v_scroll = ttk.Scrollbar(table_frame, orient="vertical", command=tree.yview)
-    h_scroll = ttk.Scrollbar(table_frame, orient="horizontal", command=tree.xview)
-
-    tree.configure(yscrollcommand=v_scroll.set, xscrollcommand=h_scroll.set)   
+    tree.configure(yscrollcommand=v_scroll.set)
     tree.grid(row=0, column=0, sticky="nsew")
     v_scroll.grid(row=0, column=1, sticky="ns")
-    h_scroll.grid(row=1, column=0, sticky="ew")
 
     for col in cot:
         tree.heading(col, text=col)
-        tree.column(col, width=100, anchor="center")
-    
+        tree.column(col, anchor="center")
+
     # ==========================================================
     # ===================== HÀM CHỨC NĂNG ======================
     # ==========================================================
 
-    # ========= Kết nối database ===========
-    conn = get_db_connect()
-    if conn is None:
-        return
-    cursor = conn.cursor()
-
-    # ========= frame thêm sinh viên ==========
-    def open_add_sv_frame(frame_right, reload_table_callback):
-        frame = tk.Toplevel(frame_right)
-        frame.title("Thêm sinh viên")
-        frame.geometry("600x400")
-
-        tk.Label(frame, text=f"Thêm sinh viên vào học phần", font=("Arial", 13, "bold")).pack(pady=10)
-
-        # Thanh tìm kiếm
-        frame_search = tk.Frame(frame)
-        frame_search.pack(pady=5)
-        tk.Label(frame_search, text="Tìm sinh viên:").pack(side="left", padx=5)
-        entry_search = tk.Entry(frame_search, width=30)
-        entry_search.pack(side="left", padx=5)
-
-        # Bảng sinh viên
-        table = tk.Frame(frame, bg="white", bd=2, relief="groove")
-        table.pack(padx=5, pady=5, fill="both", expand=True)
-
-        # Cho phép bảng co giãn
-        table.grid_rowconfigure(0, weight=1)
-        table.grid_columnconfigure(0, weight=1)
-
-        cotsv = ("MSSV", "Họ Tên", "Ngày Sinh", "Giới Tính", "Lớp", "Khoa")
-        tree_sv =ttk.Treeview(table, columns=cot, show="headings")
-
-        v_scroll = ttk.Scrollbar(table, orient="vertical", command=tree_sv.yview)
-        h_scroll = ttk.Scrollbar(table, orient="horizontal", command=tree_sv.xview)
-
-        tree_sv.configure(yscrollcommand=v_scroll.set, xscrollcommand=h_scroll.set)   
-        tree_sv.grid(row=0, column=0, sticky="nsew")
-        v_scroll.grid(row=0, column=1, sticky="ns")
-        h_scroll.grid(row=1, column=0, sticky="ew")
-
-        for col in cotsv:
-            tree_sv.heading(col, text=col)
-            tree_sv.column(col, width=150, anchor="center")
-
-        def load_sv(filter_text=""):
-            # Xóa dữ liệu cũ trong Treeview
-            tree_sv.delete(*tree_sv.get_children())
-
-            try:
-                conn = get_db_connect()
-                cursor = conn.cursor()
-
-                # Nếu có nhập chuỗi tìm kiếm → lọc theo mssv, tên, lớp
-                if filter_text.strip() != "":
-                    query = """
-                        SELECT MSSV, HoTen, Lop
-                        FROM SinhVien
-                        WHERE HoTen LIKE ?
-                    """
-                    cursor.execute(query, f"%{filter_text}%")
-                else:
-                    # Không nhập gì thì lấy tất cả
-                    query = "SELECT * FROM SinhVien"
-                    cursor.execute(query)
-
-                # Duyệt qua từng dòng kết quả và thêm vào Treeview
-                for row in cursor.fetchall():
-                    tree_sv.insert("", "end", values=tuple(row))
-
-            except Exception as e:
-                messagebox.showerror("Lỗi", f"Không thể tải danh sách sinh viên:\n{e}")
-            finally:
-                if 'conn' in locals():
-                    conn.close()
-        load_sv()
-
-        # Gắn tìm kiếm
-        entry_search.bind("<KeyRelease>", lambda e: load_sv(entry_search.get()))
-
-        # Nút thêm
-        def them_sv():
-            selected = tree_sv.selection()
-            if not selected:
-                messagebox.showwarning("Chưa chọn", "Vui lòng chọn sinh viên cần thêm!")
-                return
-
-            added = 0
-            for item in selected:
-                ma_sv, ten_sv = tree_sv.item(item, "values")
-                if ma_sv not in [sv[0] for sv in HOC_PHAN_SV[ma_hp]]:
-                    HOC_PHAN_SV[ma_hp].append((ma_sv, ten_sv))
-                    added += 1
-
-            reload_table_callback()
-            messagebox.showinfo("Thành công", f"Đã thêm {added} sinh viên vào {ma_hp}.")
-
-        def xoa_tat_ca():
-            if messagebox.askyesno("Xác nhận", "Bạn có chắc muốn xóa tất cả sinh viên vừa thêm?"):
-                HOC_PHAN_SV[ma_hp].clear()
-                reload_table_callback()
-                messagebox.showinfo("Đã xóa", f"Đã xóa toàn bộ sinh viên trong học phần {ma_hp}.")
-
-        def thoat():
-            frame.destroy()
-
     def TaiDuLieu():
+        """Hiển thị danh sách sinh viên của học phần được chọn"""
+        ma_hp = cb_hp.get().strip()
+        if not ma_hp:
+            messagebox.showwarning("Thiếu thông tin", "Vui lòng chọn học phần!")
+            return
+
         for row in tree.get_children():
             tree.delete(row)
         try:
-            cursor.execute("SELECT * FROM SinhVien")
+            conn = get_db_connect()
+            cursor = conn.cursor()
+            cursor.execute("""
+                SELECT sv.MSSV, sv.HoTen, sv.Lop, sv.Khoa
+                FROM SinhVien sv
+                INNER JOIN Diem d ON sv.MSSV = d.MSSV
+                WHERE d.MaHP = ?
+            """, (ma_hp,))
             rows = cursor.fetchall()
             for row in rows:
-                tree.insert("", "end", values=tuple(row))
+                tree.insert("", "end", values=row)
         except Exception as e:
             messagebox.showerror("Lỗi", str(e))
+        finally:
+            conn.close()
 
-    def Them():
+    def Xoa():
+        selected = tree.selection()
+        if not selected:
+            messagebox.showwarning("Chưa chọn", "Vui lòng chọn sinh viên cần xóa.")
+            return
+        ma_hp = cb_hp.get().strip()
+        if not ma_hp:
+            messagebox.showwarning("Thiếu thông tin", "Chưa chọn học phần.")
+            return
         try:
-            MaHP = cb_hp.get()
-
-            if MaHP == "":
-                messagebox.showwarning("Thiếu thông tin", "Vui lòng chọn học phần!")
-                return
-            else:
-                open_add_sv_frame(frame_right, TaiDuLieu)
+            conn = get_db_connect()
+            cursor = conn.cursor()
+            for item in selected:
+                mssv = tree.item(item, "values")[0]
+                cursor.execute("DELETE FROM Diem WHERE MaHP=? AND MSSV=?", (ma_hp, mssv))
+            conn.commit()
+            messagebox.showinfo("Thành công", "Đã xóa sinh viên khỏi học phần.")
+            TaiDuLieu()
         except Exception as e:
             messagebox.showerror("Lỗi", str(e))
-            
+        finally:
+            conn.close()
+
+    def open_add_sv_frame():
+        """Mở cửa sổ thêm sinh viên vào học phần"""
+        ma_hp = cb_hp.get().strip()
+        if not ma_hp:
+            messagebox.showwarning("Thiếu thông tin", "Vui lòng chọn học phần!")
+            return
+
+        add_window = tk.Toplevel(frame_right)
+        add_window.title("Thêm sinh viên vào học phần")
+        add_window.geometry("650x400")
+
+        tk.Label(add_window, text=f"Học phần: {ma_hp}", font=("Times New Roman", 14, "bold")).pack(pady=10)
+
+        # Thanh tìm kiếm
+        search_frame = tk.Frame(add_window)
+        search_frame.pack(pady=5)
+        tk.Label(search_frame, text="Tìm sinh viên: ").pack(side="left")
+        entry_search = tk.Entry(search_frame, width=30)
+        entry_search.pack(side="left", padx=5)
+
+        # Bảng sinh viên
+        table_sv = tk.Frame(add_window)
+        table_sv.pack(padx=5, pady=5, fill="both", expand=True)
+        columns_sv = ("MSSV", "Họ tên", "Lớp", "Khoa")
+        tree_sv = ttk.Treeview(table_sv, columns=columns_sv, show="headings")
+        v_scroll_sv = ttk.Scrollbar(table_sv, orient="vertical", command=tree_sv.yview)
+        tree_sv.configure(yscrollcommand=v_scroll_sv.set)
+        tree_sv.grid(row=0, column=0, sticky="nsew")
+        v_scroll_sv.grid(row=0, column=1, sticky="ns")
+        for col in columns_sv:
+            tree_sv.heading(col, text=col)
+            tree_sv.column(col, anchor="center")
+
+        # Nút thêm
+        btns = tk.Frame(add_window)
+        btns.pack(pady=10)
+        ttk.Button(btns, text="Thêm vào học phần", width=25, command=lambda: them_sv()).pack(side="left", padx=5)
+        ttk.Button(btns, text="Thoát", width=15, command=add_window.destroy).pack(side="left", padx=5)
+
+        def load_sv(filter_text=""):
+            tree_sv.delete(*tree_sv.get_children())
+            try:
+                conn = get_db_connect()
+                cursor = conn.cursor()
+                if filter_text:
+                    cursor.execute("SELECT MSSV, HoTen, Lop, Khoa FROM SinhVien WHERE HoTen LIKE ?", (f"%{filter_text}%",))
+                else:
+                    cursor.execute("SELECT MSSV, HoTen, Lop, Khoa FROM SinhVien")
+                for row in cursor.fetchall():
+                    tree_sv.insert("", "end", values=row)
+            finally:
+                conn.close()
+
+        def them_sv():
+            selected = tree_sv.selection()
+            if not selected:
+                messagebox.showwarning("Chưa chọn", "Vui lòng chọn sinh viên để thêm.")
+                return
+            try:
+                conn = get_db_connect()
+                cursor = conn.cursor()
+                added = 0
+                for item in selected:
+                    mssv = tree_sv.item(item, "values")[0]
+                    cursor.execute("SELECT COUNT(*) FROM HocPhan_SinhVien WHERE MaHP=? AND MSSV=?", (ma_hp, mssv))
+                    if cursor.fetchone()[0] == 0:
+                        cursor.execute("INSERT INTO HocPhan_SinhVien (MaHP, MSSV) VALUES (?, ?)", (ma_hp, mssv))
+                        added += 1
+                conn.commit()
+                messagebox.showinfo("Thành công", f"Đã thêm {added} sinh viên vào học phần {ma_hp}.")
+                TaiDuLieu()
+            except Exception as e:
+                messagebox.showerror("Lỗi", str(e))
+            finally:
+                conn.close()
+
+        entry_search.bind("<KeyRelease>", lambda e: load_sv(entry_search.get()))
+        load_sv()
+
