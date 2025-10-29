@@ -77,8 +77,8 @@ def add_hp(frame_right):
 
     
     for col in cot:
-        tree.heading(col, text=col)
         tree.column(col, width=100, anchor="center")
+        tree.heading(col, text=col)
 
     # ==========================================================
     # ===================== HÀM CHỨC NĂNG ======================

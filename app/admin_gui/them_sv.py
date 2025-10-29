@@ -56,14 +56,24 @@ def add_sv(frame_right):
     cot = ("MSSV", "Họ tên", "Lớp", "Khoa")
     tree = ttk.Treeview(table_frame, columns=cot, show="headings")
 
+    tree.heading("MSSV", text="MSSV")
+    tree.column("MSSV", width=50 ,anchor="center")
+
+    tree.heading("Họ tên", text="Họ tên")
+    tree.column("Họ tên", width=120 ,anchor="center")
+
+    tree.heading("Lớp", text="Lớp")
+    tree.column("Lớp", width=50 ,anchor="center")
+
+    tree.heading("Khoa", text="Khoa")
+    tree.column("Khoa", width=120 ,anchor="center")
+
     v_scroll = ttk.Scrollbar(table_frame, orient="vertical", command=tree.yview)
+    h_scroll = ttk.Scrollbar(table_frame, orient="horizontal", command=tree.xview)
     tree.configure(yscrollcommand=v_scroll.set)
     tree.grid(row=0, column=0, sticky="nsew")
     v_scroll.grid(row=0, column=1, sticky="ns")
-
-    for col in cot:
-        tree.heading(col, text=col)
-        tree.column(col, anchor="center")
+    h_scroll.grid(row=1, column=0, sticky="ew")
 
     # ==========================================================
     # ===================== HÀM CHỨC NĂNG ======================
@@ -89,7 +99,7 @@ def add_sv(frame_right):
             """, (ma_hp,))
             rows = cursor.fetchall()
             for row in rows:
-                tree.insert("", "end", values=row)
+                tree.insert("", "end", values=tuple(row))
         except Exception as e:
             messagebox.showerror("Lỗi", str(e))
         finally:
@@ -139,14 +149,20 @@ def add_sv(frame_right):
         entry_search.pack(side="left", padx=5)
 
         # Bảng sinh viên
-        table_sv = tk.Frame(add_window)
-        table_sv.pack(padx=5, pady=5, fill="both", expand=True)
+        table_sv = tk.Frame(add_window, relief="groove")
+        table_sv.pack(padx=10, pady=5, fill="both")
+
         columns_sv = ("MSSV", "Họ tên", "Lớp", "Khoa")
         tree_sv = ttk.Treeview(table_sv, columns=columns_sv, show="headings")
+
         v_scroll_sv = ttk.Scrollbar(table_sv, orient="vertical", command=tree_sv.yview)
-        tree_sv.configure(yscrollcommand=v_scroll_sv.set)
+        h_scroll_sv = ttk.Scrollbar(table_sv, orient="horizontal", command=tree_sv.xview)
+
+        tree_sv.configure(yscrollcommand=v_scroll_sv.set, xscrollcommand=h_scroll_sv)
         tree_sv.grid(row=0, column=0, sticky="nsew")
         v_scroll_sv.grid(row=0, column=1, sticky="ns")
+        h_scroll_sv.grid(row=1, column=0, sticky="ew")
+
         for col in columns_sv:
             tree_sv.heading(col, text=col)
             tree_sv.column(col, anchor="center")
@@ -167,7 +183,7 @@ def add_sv(frame_right):
                 else:
                     cursor.execute("SELECT MSSV, HoTen, Lop, Khoa FROM SinhVien")
                 for row in cursor.fetchall():
-                    tree_sv.insert("", "end", values=row)
+                    tree_sv.insert("", "end", values=tuple(row))
             finally:
                 conn.close()
 
@@ -182,9 +198,9 @@ def add_sv(frame_right):
                 added = 0
                 for item in selected:
                     mssv = tree_sv.item(item, "values")[0]
-                    cursor.execute("SELECT COUNT(*) FROM HocPhan_SinhVien WHERE MaHP=? AND MSSV=?", (ma_hp, mssv))
+                    cursor.execute("SELECT COUNT(*) FROM Diem WHERE MaHP=? AND MSSV=?", (ma_hp, mssv))
                     if cursor.fetchone()[0] == 0:
-                        cursor.execute("INSERT INTO HocPhan_SinhVien (MaHP, MSSV) VALUES (?, ?)", (ma_hp, mssv))
+                        cursor.execute("INSERT INTO Diem (MaHP, MSSV) VALUES (?, ?)", (ma_hp, mssv))
                         added += 1
                 conn.commit()
                 messagebox.showinfo("Thành công", f"Đã thêm {added} sinh viên vào học phần {ma_hp}.")
