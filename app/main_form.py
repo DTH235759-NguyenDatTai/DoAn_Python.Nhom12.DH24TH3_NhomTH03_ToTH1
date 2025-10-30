@@ -93,6 +93,6 @@ def create_mainForm(username, role):
     for text, command in buttons:
         btn = ttk.Button(btn_frame, text=text, width=20, command=command)
         btn.pack(pady=8)
-#     # Chạy test 
-#     mainform.mainloop()
-# create_mainForm("admin", "admin")
+    # Chạy test 
+    mainform.mainloop()
+create_mainForm("GV001", "giangvien")
