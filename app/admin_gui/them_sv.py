@@ -49,28 +49,38 @@ def add_sv(frame_right):
     # ==========================================================
 
     table_frame = tk.Frame(frame_right, bg="white", bd=2, relief="groove")
-    table_frame.pack(padx=5, pady=5, fill="both", expand=True)
+    table_frame.pack(padx=10, pady=10, fill="both", expand=True)
+
+    # ===== Treeview =====
+    tree = ttk.Treeview(
+        table_frame,
+        columns=("MSSV", "Họ tên", "Lớp", "Khoa"),
+        show="headings",
+        height=8
+    )
+
+    # Cấu hình cột
+    tree.heading("MSSV", text="MSSV")
+    tree.column("MSSV", width=50, anchor="center")
+
+    tree.heading("Họ tên", text="Họ tên")
+    tree.column("Họ tên", width=120, anchor="center")
+
+    tree.heading("Lớp", text="Lớp")
+    tree.column("Lớp", width=50, anchor="center")
+
+    tree.heading("Khoa", text="Khoa")
+    tree.column("Khoa", width=150, anchor="center")
+
+    # ===== Thanh cuộn =====
+    v_scroll = ttk.Scrollbar(table_frame, orient="vertical", command=tree.yview)
+    h_scroll = ttk.Scrollbar(table_frame, orient="horizontal", command=tree.xview)
+    tree.configure(yscrollcommand=v_scroll.set, xscrollcommand=h_scroll.set)
+
+    # ===== Dùng grid để canh chỉnh =====
     table_frame.grid_rowconfigure(0, weight=1)
     table_frame.grid_columnconfigure(0, weight=1)
 
-    cot = ("MSSV", "Họ tên", "Lớp", "Khoa")
-    tree = ttk.Treeview(table_frame, columns=cot, show="headings")
-
-    tree.heading("MSSV", text="MSSV")
-    tree.column("MSSV", width=50 ,anchor="center")
-
-    tree.heading("Họ tên", text="Họ tên")
-    tree.column("Họ tên", width=120 ,anchor="center")
-
-    tree.heading("Lớp", text="Lớp")
-    tree.column("Lớp", width=50 ,anchor="center")
-
-    tree.heading("Khoa", text="Khoa")
-    tree.column("Khoa", width=120 ,anchor="center")
-
-    v_scroll = ttk.Scrollbar(table_frame, orient="vertical", command=tree.yview)
-    h_scroll = ttk.Scrollbar(table_frame, orient="horizontal", command=tree.xview)
-    tree.configure(yscrollcommand=v_scroll.set)
     tree.grid(row=0, column=0, sticky="nsew")
     v_scroll.grid(row=0, column=1, sticky="ns")
     h_scroll.grid(row=1, column=0, sticky="ew")
@@ -137,7 +147,8 @@ def add_sv(frame_right):
 
         add_window = tk.Toplevel(frame_right)
         add_window.title("Thêm sinh viên vào học phần")
-        add_window.geometry("650x400")
+        add_window.geometry("700x400")
+        add_window.resizable(False, False)
 
         tk.Label(add_window, text=f"Học phần: {ma_hp}", font=("Times New Roman", 14, "bold")).pack(pady=10)
 
@@ -148,30 +159,43 @@ def add_sv(frame_right):
         entry_search = tk.Entry(search_frame, width=30)
         entry_search.pack(side="left", padx=5)
 
-        # Bảng sinh viên
-        table_sv = tk.Frame(add_window, relief="groove")
-        table_sv.pack(padx=10, pady=5, fill="both")
+        # ======= KHUNG CHỨA BẢNG SINH VIÊN =======
+        table_sv = tk.Frame(add_window, bg="white", bd=2, relief="groove")
+        table_sv.pack(padx=10, pady=5, fill="both", expand=True)
+        table_sv.pack_propagate(False)  # Giữ kích thước khung, không co lại
+
+        # ======= THANH CUỘN =======
+        v_scroll_sv = ttk.Scrollbar(table_sv, orient="vertical")
+        h_scroll_sv = ttk.Scrollbar(table_sv, orient="horizontal")
 
         columns_sv = ("MSSV", "Họ tên", "Lớp", "Khoa")
-        tree_sv = ttk.Treeview(table_sv, columns=columns_sv, show="headings")
+        tree_sv = ttk.Treeview(
+            table_sv,
+            columns=columns_sv,
+            show="headings",
+            yscrollcommand=v_scroll_sv.set,
+            xscrollcommand=h_scroll_sv.set
+        )
 
-        v_scroll_sv = ttk.Scrollbar(table_sv, orient="vertical", command=tree_sv.yview)
-        h_scroll_sv = ttk.Scrollbar(table_sv, orient="horizontal", command=tree_sv.xview)
+        # Liên kết thanh cuộn
+        v_scroll_sv.config(command=tree_sv.yview)
+        h_scroll_sv.config(command=tree_sv.xview)
 
-        tree_sv.configure(yscrollcommand=v_scroll_sv.set, xscrollcommand=h_scroll_sv)
-        tree_sv.grid(row=0, column=0, sticky="nsew")
-        v_scroll_sv.grid(row=0, column=1, sticky="ns")
-        h_scroll_sv.grid(row=1, column=0, sticky="ew")
+        v_scroll_sv.pack(side="right", fill="y")    # Cuộn dọc bên phải
+        h_scroll_sv.pack(side="bottom", fill="x")   # Cuộn ngang bên dưới
+        tree_sv.pack(side="left", fill="both", expand=True)  # Bảng chiếm phần còn lại
 
+        # ======= CẤU HÌNH CỘT =======
         for col in columns_sv:
             tree_sv.heading(col, text=col)
-            tree_sv.column(col, anchor="center")
+            tree_sv.column(col, width=180, anchor="center")  # đặt rộng hơn khung để test cuộn ngang
 
-        # Nút thêm
+        # ======= NÚT =======
         btns = tk.Frame(add_window)
         btns.pack(pady=10)
-        ttk.Button(btns, text="Thêm vào học phần", width=25, command=lambda: them_sv()).pack(side="left", padx=5)
-        ttk.Button(btns, text="Thoát", width=15, command=add_window.destroy).pack(side="left", padx=5)
+
+        ttk.Button(btns, text="Thêm vào học phần", width=25, command=lambda:them_sv).pack(side="left", padx=5)
+        ttk.Button(btns, text="Thoát", width=15, command=add_window.destroy).pack(side="right", padx=5)
 
         def load_sv(filter_text=""):
             tree_sv.delete(*tree_sv.get_children())

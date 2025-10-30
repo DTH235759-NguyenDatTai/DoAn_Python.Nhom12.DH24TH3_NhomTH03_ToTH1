@@ -46,7 +46,7 @@ def create_mainForm(username, role):
     
     # ====== KHUNG PHẢI (ẢNH) ======
     frame_right = tk.Frame(mainform, bg="white", bd=1, relief="solid")
-    frame_right.place(x=330, y=30, width=645, height=500)
+    frame_right.place(x=330, y=30, width=650, height=500)
 
     # Tiêu đề (đưa khoa và trường xuống dòng)
     lbl_title = tk.Label(
@@ -93,6 +93,6 @@ def create_mainForm(username, role):
     for text, command in buttons:
         btn = ttk.Button(btn_frame, text=text, width=20, command=command)
         btn.pack(pady=8)
-    # Chạy test 
-    mainform.mainloop()
-create_mainForm("admin", "admin")
+#     # Chạy test 
+#     mainform.mainloop()
+# create_mainForm("admin", "admin")
