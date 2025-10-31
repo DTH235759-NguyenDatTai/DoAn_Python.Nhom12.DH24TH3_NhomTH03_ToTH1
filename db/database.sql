@@ -63,43 +63,35 @@ GO
 CREATE TABLE MonHoc(
 	MaMH NVARCHAR(20) PRIMARY KEY,
 	TenMH NVARCHAR(100) NOT NULL,
-	SoTinChi INT NOT NULL
-);
-GO
-
--- =============================================
--- BẢNG 5: HOCPHAN
--- =============================================
-CREATE TABLE HocPhan(
-	MaHP NVARCHAR(20) PRIMARY KEY,
-	MaMH NVARCHAR(20) NOT NULL,
-	MaGV NVARCHAR(20) NOT NULL,
+	SoTinChi INT NOT NULL,
+	PtKt INT NOT NULL,
+	PtThi INT NOT NULL,
 	HocKy INT NOT NULL,
-	NamHoc NVARCHAR(20) NULL,
+	NamHoc NVARCHAR(20) NOT NULL,
+	MaGV NVARCHAR(20) NOT NULL,
 
-	-- Ràng buộc khóa ngoại: 
-	CONSTRAINT FK_HocPhan_MonHoc FOREIGN KEY (MaMH) REFERENCES MonHoc(MaMH),
-	CONSTRAINT FK_HocPhan_GiaoVien FOREIGN KEY (MaGV) REFERENCES GiangVien(MaGV)
+	-- Rằng buộc học kỳ chỉ có 3 học kỳ 1, 2, hè
+	CONSTRAINT CK_MonHoc_HocKy CHECK (HocKy IN ('1', '2', '3')),
+	-- Rằng buộc khóa ngoại
+	CONSTRAINT FK_MonHoc_GiangVien FOREIGN KEY (MaGV) REFERENCES GiangVien(MaGV)
 );
 GO
 
 -- =============================================
--- BẢNG 6: DIEM
+-- BẢNG 5: DIEM
 -- =============================================
 CREATE TABLE Diem (
     MSSV NVARCHAR(20) NOT NULL,
-    MaHP NVARCHAR(20) NOT NULL,
+    MaMH NVARCHAR(20) NOT NULL,
 
-    DiemGK FLOAT NULL,
+    DiemQT FLOAT NULL,
     DiemCK FLOAT NULL,
 
-	-- Thông tin thêm
-    HocKy INT NULL, 
-    NamHoc NVARCHAR(20) NULL,
-	
-    CONSTRAINT PK_DangKyHocPhan PRIMARY KEY (MaHP, MSSV),
-    CONSTRAINT FK_DangKyHocPhan_HocPhan FOREIGN KEY (MaHP) REFERENCES HocPhan(MaHP),
-    CONSTRAINT FK_DangKyHocPhan_SinhVien FOREIGN KEY (MSSV) REFERENCES SinhVien(MSSV)
+
+	CONSTRAINT PK_Diem PRIMARY KEY (MSSV, MaMH),
+    -- Rằng buộc khóa ngoại
+	CONSTRAINT FK_Diem_SinhVien FOREIGN KEY (MSSV) REFERENCES SinhVien(MSSV),
+	CONSTRAINT FK_Diem_MaMH FOREIGN KEY (MaMH) REFERENCES MonHoc(MaMH)
 );
 GO
 
@@ -142,34 +134,19 @@ VALUES
 (N'GV006', N'H.T.Thành', N'Nam', N'GV006');
 Go
 
-INSERT INTO MonHoc(MaMH, TenMH, SoTinChi)
+INSERT INTO MonHoc (MaMH, TenMH, SoTinChi, PtKt, PtThi, HocKy, NamHoc, MaGV)
 VALUES
-('PHY109', N'Vật lý đại cương', '4'),
-('TEC511', N'Hóa đại cương', '4'),
-('MAT104', N'Toán A1', '3'),
-('COS106', N'Lập trình căn bản', N'3'),
-('PHT154', N'Bóng chuyền 1', '3'),
-('PHI104', N'Triết học Mác-Lenin', '2'),
-('MAT105', N'Toán A2', '3'),
-('MAX309', N'Kinh tế chính trị Mác-Lenin', '2'),
-('MAT106', N'Toán A3', '3'),
-('MAX310', N'Chủ nghĩa xã hội', '2'),
-('PRS302', N'Xác xuất thống kê', '3');
-GO
-
-INSERT INTO HocPhan(MaHP, MaMH, MaGV, HocKy, NamHoc)
-VALUES
-('HP001', 'PHY109', 'GV006', '1', '2023-2024'),
-('HP002', 'TEC511', 'GV006', '1', '2023-2024'),
-('HP003', 'MAT104', 'GV002', '1', '2023-2024'),
-('HP004', 'COS106', 'GV001', '1', '2023-2024'),
-('HP005', 'PHT154', 'GV004', '2', '2023-2024'),
-('HP006', 'PHI104', 'GV005', '2', '2023-2024'),
-('HP007', 'MAT105', 'GV002', '1', '2024-2025'),
-('HP008', 'MAX309', 'GV005', '1', '2024-2025'),
-('HP009', 'MAT106', 'GV002', '2', '2024-2025'),
-('HP010', 'MAX310', 'GV003', '2', '2024-2025'),
-('HP011', 'PRS302', 'GV002', '2', '2024-2025')
+('PHY109', N'Vật lý đại cương', 4, 40, 60, '1', '2023-2024', 'GV006'),
+('TEC511', N'Hóa đại cương', 4, 40, 60, '1', '2023-2024', 'GV006'),
+('MAT104', N'Toán A1', 3, 40, 60, '1', '2023-2024', 'GV002'),
+('COS106', N'Lập trình căn bản', 3, 40, 60, '1', '2023-2024', 'GV001'),
+('PHT154', N'Bóng chuyền 1', 3, 40, 60, '2', '2023-2024', 'GV004'),
+('PHI104', N'Triết học Mác-Lenin', 2, 50, 50, '2', '2023-2024', 'GV005'),
+('MAT105', N'Toán A2', 3, 40, 60, '1', '2024-2025', 'GV002'),
+('MAX309', N'Kinh tế chính trị Mác-Lenin', 2, 50, 50, '1', '2024-2025', 'GV005'),
+('MAT106', N'Toán A3', 3, 40, 60, '2', '2024-2025', 'GV002'),
+('MAX310', N'Chủ nghĩa xã hội', 2, 50, 50, '2', '2024-2025', 'GV003'),
+('PRS302', N'Xác suất thống kê', 3, 40, 60, '2', '2024-2025', 'GV002');
 GO
 
 USE QL_Diem
@@ -177,5 +154,4 @@ SELECT * FROM TaiKhoan
 SELECT * FROM GiangVien
 SELECT * FROM SinhVien
 SELECT * FROM MonHoc
-SELECT * FROM HocPhan
 SELECT * FROM Diem
