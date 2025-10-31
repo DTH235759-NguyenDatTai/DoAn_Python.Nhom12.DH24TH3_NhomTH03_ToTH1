@@ -11,7 +11,7 @@ def create_mainForm(username, role):
     # ====== CỬA SỔ CHÍNH ======
     mainform = tk.Tk()
     mainform.title("Chương Trình Quản Lý Điểm Sinh Viên")
-    mainform.geometry("1000x550")
+    mainform.geometry("1200x650")
     mainform.configure(bg="#f4f6f9")
 
     # ====== ĐỊNH NGHĨA FONT ======
@@ -25,7 +25,7 @@ def create_mainForm(username, role):
 
     # ====== KHUNG TRÁI ======
     frame_left = tk.Frame(mainform, bg="white", bd=1, relief="solid")
-    frame_left.place(x=30, y=30, width=300, height=500)
+    frame_left.place(x=30, y=30, width=320, height=590)
 
     lbl_info = tk.Label(frame_left, text="Thông tin người dùng", bg="white", font=label_font)
     lbl_info.pack(pady=(15, 10))
@@ -46,7 +46,7 @@ def create_mainForm(username, role):
     
     # ====== KHUNG PHẢI (ẢNH) ======
     frame_right = tk.Frame(mainform, bg="white", bd=1, relief="solid")
-    frame_right.place(x=330, y=30, width=650, height=500)
+    frame_right.place(x=370, y=30, width=800, height=590)
 
     # Tiêu đề (đưa khoa và trường xuống dòng)
     lbl_title = tk.Label(
@@ -95,4 +95,4 @@ def create_mainForm(username, role):
         btn.pack(pady=8)
     # Chạy test 
     mainform.mainloop()
-create_mainForm("GV001", "giangvien")
+create_mainForm("admin", "admin")

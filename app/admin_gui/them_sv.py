@@ -9,7 +9,7 @@ def add_sv(frame_right):
 
     # ======= Tiêu đề =======
     lbl_title = tk.Label(
-        frame_right, text="THÊM SINH VIÊN VÀO HỌC PHẦN", font=("Times New Roman", 16, "bold"),
+        frame_right, text="THÊM SINH VIÊN VÀO MÔN HỌC", font=("Times New Roman", 16, "bold"),
         fg="darkred", bg="white"
     )
     lbl_title.pack(pady=5)
@@ -21,17 +21,17 @@ def add_sv(frame_right):
     input_frame = tk.Frame(frame_right, bg="white", bd=2, relief="groove")
     input_frame.pack(padx=5, pady=5, fill="x")
 
-    tk.Label(input_frame, text="Chọn học phần:", font=("Times New Roman", 12, "bold"), bg="white").grid(row=1, column=0, sticky="e", padx=5, pady=5)
-    cb_hp = ttk.Combobox(input_frame, font=("Times New Roman", 12), width=25)
-    cb_hp.grid(row=1, column=1, padx=5, pady=5, sticky="w")
+    tk.Label(input_frame, text="Chọn môn học:", font=("Times New Roman", 12, "bold"), bg="white").grid(row=1, column=0, sticky="e", padx=5, pady=5)
+    cb_mh = ttk.Combobox(input_frame, font=("Times New Roman", 12), width=40, state="readonly")
+    cb_mh.grid(row=1, column=1, padx=5, pady=5, sticky="w")
 
-    # Lấy danh sách học phần từ SQL
+    # Lấy danh sách môn học từ SQL (hiển thị mã và tên môn học)
     conn = get_db_connect()
     if conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT MaHP FROM HocPhan")
-        hp_list = [row[0] for row in cursor.fetchall()]
-        cb_hp["values"] = hp_list
+        cursor.execute("SELECT MaMH, TenMH FROM MonHoc ORDER BY NamHoc DESC, HocKy ASC")
+        mh_list = [f"{row[0]} - {row[1]}" for row in cursor.fetchall()]
+        cb_mh["values"] = mh_list
         conn.close()
 
     # ==========================================================
@@ -43,6 +43,7 @@ def add_sv(frame_right):
     ttk.Button(btn_frame, text="Xem danh sách SV", width=20, command=lambda: TaiDuLieu()).grid(row=0, column=0, padx=10)
     ttk.Button(btn_frame, text="Thêm sinh viên", width=20, command=lambda: open_add_sv_frame()).grid(row=0, column=1, padx=10)
     ttk.Button(btn_frame, text="Xóa sinh viên", width=20, command=lambda: Xoa()).grid(row=0, column=2, padx=10)
+    ttk.Button(btn_frame, text="Làm mới", width=20, command=lambda: LamMoi()).grid(row=0, column=3, padx=10)
 
     # ==========================================================
     # ================= BẢNG HIỂN THỊ DỮ LIỆU ==================
@@ -90,11 +91,14 @@ def add_sv(frame_right):
     # ==========================================================
 
     def TaiDuLieu():
-        """Hiển thị danh sách sinh viên của học phần được chọn"""
-        ma_hp = cb_hp.get().strip()
-        if not ma_hp:
-            messagebox.showwarning("Thiếu thông tin", "Vui lòng chọn học phần!")
+        """Hiển thị danh sách sinh viên của môn học được chọn"""
+        mh_selected = cb_mh.get().strip()
+        if not mh_selected:
+            messagebox.showwarning("Thiếu thông tin", "Vui lòng chọn môn học!")
             return
+        
+        # Lấy mã môn học từ chuỗi "MaMH - TenMH"
+        ma_mh = mh_selected.split(" - ")[0] if " - " in mh_selected else mh_selected
 
         for row in tree.get_children():
             tree.delete(row)
@@ -105,8 +109,9 @@ def add_sv(frame_right):
                 SELECT sv.MSSV, sv.HoTen, sv.Lop, sv.Khoa
                 FROM SinhVien sv
                 INNER JOIN Diem d ON sv.MSSV = d.MSSV
-                WHERE d.MaHP = ?
-            """, (ma_hp,))
+                WHERE d.MaMH = ?
+                ORDER BY sv.MSSV
+            """, (ma_mh,))
             rows = cursor.fetchall()
             for row in rows:
                 tree.insert("", "end", values=tuple(row))
@@ -120,37 +125,53 @@ def add_sv(frame_right):
         if not selected:
             messagebox.showwarning("Chưa chọn", "Vui lòng chọn sinh viên cần xóa.")
             return
-        ma_hp = cb_hp.get().strip()
-        if not ma_hp:
-            messagebox.showwarning("Thiếu thông tin", "Chưa chọn học phần.")
+        mh_selected = cb_mh.get().strip()
+        if not mh_selected:
+            messagebox.showwarning("Thiếu thông tin", "Chưa chọn môn học.")
             return
+        
+        # Lấy mã môn học từ chuỗi "MaMH - TenMH"
+        ma_mh = mh_selected.split(" - ")[0] if " - " in mh_selected else mh_selected
+        
         try:
             conn = get_db_connect()
             cursor = conn.cursor()
             for item in selected:
                 mssv = tree.item(item, "values")[0]
-                cursor.execute("DELETE FROM Diem WHERE MaHP=? AND MSSV=?", (ma_hp, mssv))
+                cursor.execute("DELETE FROM Diem WHERE MaMH=? AND MSSV=?", (ma_mh, mssv))
             conn.commit()
-            messagebox.showinfo("Thành công", "Đã xóa sinh viên khỏi học phần.")
+            messagebox.showinfo("Thành công", "Đã xóa sinh viên khỏi môn học.")
             TaiDuLieu()
         except Exception as e:
             messagebox.showerror("Lỗi", str(e))
         finally:
             conn.close()
 
+    def LamMoi():
+        """Làm mới form"""
+        cb_mh.set("")
+        for row in tree.get_children():
+            tree.delete(row)
+
     def open_add_sv_frame():
-        """Mở cửa sổ thêm sinh viên vào học phần"""
-        ma_hp = cb_hp.get().strip()
-        if not ma_hp:
-            messagebox.showwarning("Thiếu thông tin", "Vui lòng chọn học phần!")
+        """Mở cửa sổ thêm sinh viên vào môn học"""
+        mh_selected = cb_mh.get().strip()
+        if not mh_selected:
+            messagebox.showwarning("Thiếu thông tin", "Vui lòng chọn môn học!")
             return
+        
+        # Lấy mã môn học từ chuỗi "MaMH - TenMH"
+        ma_mh = mh_selected.split(" - ")[0] if " - " in mh_selected else mh_selected
 
         add_window = tk.Toplevel(frame_right)
-        add_window.title("Thêm sinh viên vào học phần")
-        add_window.geometry("700x400")
+        add_window.title("Thêm sinh viên vào môn học")
+        add_window.geometry("700x500")
         add_window.resizable(False, False)
+        add_window.transient(frame_right)
+        add_window.grab_set()
+        add_window.focus_set()
 
-        tk.Label(add_window, text=f"Học phần: {ma_hp}", font=("Times New Roman", 14, "bold")).pack(pady=10)
+        tk.Label(add_window, text=f"Môn học: {mh_selected}", font=("Times New Roman", 14, "bold")).pack(pady=10)
 
         # Thanh tìm kiếm
         search_frame = tk.Frame(add_window)
@@ -194,22 +215,31 @@ def add_sv(frame_right):
         btns = tk.Frame(add_window)
         btns.pack(pady=10)
 
-        ttk.Button(btns, text="Thêm vào học phần", width=25, command=lambda:them_sv).pack(side="left", padx=5)
+        ttk.Button(btns, text="Thêm vào môn học", width=25, command=them_sv).pack(side="left", padx=5)
         ttk.Button(btns, text="Thoát", width=15, command=add_window.destroy).pack(side="right", padx=5)
 
         def load_sv(filter_text=""):
+            """Tải danh sách sinh viên từ bảng SinhVien"""
             tree_sv.delete(*tree_sv.get_children())
+            conn = None
             try:
                 conn = get_db_connect()
+                if conn is None:
+                    messagebox.showerror("Lỗi", "Không thể kết nối cơ sở dữ liệu.")
+                    return
                 cursor = conn.cursor()
                 if filter_text:
-                    cursor.execute("SELECT MSSV, HoTen, Lop, Khoa FROM SinhVien WHERE HoTen LIKE ?", (f"%{filter_text}%",))
+                    cursor.execute("SELECT MSSV, HoTen, Lop, Khoa FROM SinhVien WHERE HoTen LIKE ? ORDER BY MSSV", (f"%{filter_text}%",))
                 else:
-                    cursor.execute("SELECT MSSV, HoTen, Lop, Khoa FROM SinhVien")
-                for row in cursor.fetchall():
+                    cursor.execute("SELECT MSSV, HoTen, Lop, Khoa FROM SinhVien ORDER BY MSSV")
+                rows = cursor.fetchall()
+                for row in rows:
                     tree_sv.insert("", "end", values=tuple(row))
+            except Exception as e:
+                messagebox.showerror("Lỗi", f"Không thể tải danh sách sinh viên: {str(e)}")
             finally:
-                conn.close()
+                if conn:
+                    conn.close()
 
         def them_sv():
             selected = tree_sv.selection()
@@ -220,15 +250,22 @@ def add_sv(frame_right):
                 conn = get_db_connect()
                 cursor = conn.cursor()
                 added = 0
+                skipped = 0
                 for item in selected:
                     mssv = tree_sv.item(item, "values")[0]
-                    cursor.execute("SELECT COUNT(*) FROM Diem WHERE MaHP=? AND MSSV=?", (ma_hp, mssv))
+                    cursor.execute("SELECT COUNT(*) FROM Diem WHERE MaMH=? AND MSSV=?", (ma_mh, mssv))
                     if cursor.fetchone()[0] == 0:
-                        cursor.execute("INSERT INTO Diem (MaHP, MSSV) VALUES (?, ?)", (ma_hp, mssv))
+                        cursor.execute("INSERT INTO Diem (MaMH, MSSV, DiemQT, DiemCK) VALUES (?, ?, NULL, NULL)", (ma_mh, mssv))
                         added += 1
+                    else:
+                        skipped += 1
                 conn.commit()
-                messagebox.showinfo("Thành công", f"Đã thêm {added} sinh viên vào học phần {ma_hp}.")
+                if added > 0:
+                    messagebox.showinfo("Thành công", f"Đã thêm {added} sinh viên vào môn học.\n{skipped} sinh viên đã tồn tại.")
+                else:
+                    messagebox.showwarning("Thông báo", f"Tất cả sinh viên đã được thêm vào môn học.")
                 TaiDuLieu()
+                add_window.destroy()
             except Exception as e:
                 messagebox.showerror("Lỗi", str(e))
             finally:
