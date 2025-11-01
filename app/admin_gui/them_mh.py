@@ -61,8 +61,8 @@ def add_mh(frame_right):
     conn = get_db_connect()
     if conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT MaGV FROM GiangVien")
-        gv_list = [row[0] for row in cursor.fetchall()]
+        cursor.execute("SELECT MaGV, HoTen FROM GiangVien")
+        gv_list = [f"{row[0]} - {row[1]}" for row in cursor.fetchall()]
         cb_magv["values"] = gv_list
         conn.close()
 

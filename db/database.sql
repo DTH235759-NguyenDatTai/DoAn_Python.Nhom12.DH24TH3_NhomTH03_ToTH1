@@ -106,13 +106,41 @@ VALUES
 (N'GV004', N'da70dfa4d9f95ac979f921e8e623358236313f334afcd06cddf8a5621cf6a1e9', N'giangvien'),
 (N'GV005', N'da70dfa4d9f95ac979f921e8e623358236313f334afcd06cddf8a5621cf6a1e9', N'giangvien'),
 (N'GV006', N'da70dfa4d9f95ac979f921e8e623358236313f334afcd06cddf8a5621cf6a1e9', N'giangvien'),
+
+(N'GV007', '114bd151f8fb0c58642d2170da4ae7d7c57977260ac2cc8905306cab6b2acabc', 'giangvien'),
+(N'GV008', '114bd151f8fb0c58642d2170da4ae7d7c57977260ac2cc8905306cab6b2acabc', 'giangvien'),
+(N'GV009', '114bd151f8fb0c58642d2170da4ae7d7c57977260ac2cc8905306cab6b2acabc', 'giangvien'),
+(N'GV010', '114bd151f8fb0c58642d2170da4ae7d7c57977260ac2cc8905306cab6b2acabc', 'giangvien'),
+(N'GV011', '114bd151f8fb0c58642d2170da4ae7d7c57977260ac2cc8905306cab6b2acabc', 'giangvien'),
+
 (N'DMT234941', N'162e3973ecf8a77629bbf7c8faaf28c13f99d4e7f1affadc616731276ee1d07a', N'sinhvien'),
 (N'DTH235759', N'162e3973ecf8a77629bbf7c8faaf28c13f99d4e7f1affadc616731276ee1d07a', N'sinhvien'),
 (N'DTH235758', N'21a450ca63e673188f62d47608211457ed9f61dc8184b39c38d8fdf4b9cbaa71', N'sinhvien'),
 (N'DTH235829', N'114bd151f8fb0c58642d2170da4ae7d7c57977260ac2cc8905306cab6b2acabc', N'sinhvien'),
 (N'DKH234819', N'114bd151f8fb0c58642d2170da4ae7d7c57977260ac2cc8905306cab6b2acabc', N'sinhvien'),
-(N'DKH234801', N'114bd151f8fb0c58642d2170da4ae7d7c57977260ac2cc8905306cab6b2acabc', N'sinhvien');
-GO
+(N'DKH234801', N'114bd151f8fb0c58642d2170da4ae7d7c57977260ac2cc8905306cab6b2acabc', N'sinhvien'),
+
+('DTH235701', '114bd151f8fb0c58642d2170da4ae7d7c57977260ac2cc8905306cab6b2acabc', 'sinhvien'),
+('DKT235702', '114bd151f8fb0c58642d2170da4ae7d7c57977260ac2cc8905306cab6b2acabc', 'sinhvien'),
+('DNN235703', '114bd151f8fb0c58642d2170da4ae7d7c57977260ac2cc8905306cab6b2acabc', 'sinhvien'),
+('DDL235704', '114bd151f8fb0c58642d2170da4ae7d7c57977260ac2cc8905306cab6b2acabc', 'sinhvien'),
+('DSP235705', '114bd151f8fb0c58642d2170da4ae7d7c57977260ac2cc8905306cab6b2acabc', 'sinhvien'),
+('DTH235706', '114bd151f8fb0c58642d2170da4ae7d7c57977260ac2cc8905306cab6b2acabc', 'sinhvien'),
+('DKT235707', '114bd151f8fb0c58642d2170da4ae7d7c57977260ac2cc8905306cab6b2acabc', 'sinhvien'),
+('DNN235708', '114bd151f8fb0c58642d2170da4ae7d7c57977260ac2cc8905306cab6b2acabc', 'sinhvien'),
+('DDL235709', '114bd151f8fb0c58642d2170da4ae7d7c57977260ac2cc8905306cab6b2acabc', 'sinhvien'),
+('DTH235710', '114bd151f8fb0c58642d2170da4ae7d7c57977260ac2cc8905306cab6b2acabc', 'sinhvien'),
+('DNN235711', '114bd151f8fb0c58642d2170da4ae7d7c57977260ac2cc8905306cab6b2acabc', 'sinhvien'),
+('DTH235712', '114bd151f8fb0c58642d2170da4ae7d7c57977260ac2cc8905306cab6b2acabc', 'sinhvien'),
+('DKT235713', '114bd151f8fb0c58642d2170da4ae7d7c57977260ac2cc8905306cab6b2acabc', 'sinhvien'),
+('DDL235714', '114bd151f8fb0c58642d2170da4ae7d7c57977260ac2cc8905306cab6b2acabc', 'sinhvien'),
+('DNN235715', '114bd151f8fb0c58642d2170da4ae7d7c57977260ac2cc8905306cab6b2acabc', 'sinhvien'),
+('DTH235716', '114bd151f8fb0c58642d2170da4ae7d7c57977260ac2cc8905306cab6b2acabc', 'sinhvien'),
+('DTA235717', '114bd151f8fb0c58642d2170da4ae7d7c57977260ac2cc8905306cab6b2acabc', 'sinhvien'),
+('DKT235718', '114bd151f8fb0c58642d2170da4ae7d7c57977260ac2cc8905306cab6b2acabc', 'sinhvien'),
+('DSP235719', '114bd151f8fb0c58642d2170da4ae7d7c57977260ac2cc8905306cab6b2acabc', 'sinhvien'),
+('DTH235720', '114bd151f8fb0c58642d2170da4ae7d7c57977260ac2cc8905306cab6b2acabc', 'sinhvien');
+
 
 INSERT INTO SinhVien(MSSV, HoTen, NgaySinh, GioiTinh, Lop, Khoa, TenDangNhap)
 VALUES
@@ -121,8 +149,29 @@ VALUES
 (N'DTH235758', N'Nguyễn Võ Thanh Sơn', N'2005-01-08', N'Nam', N'DH24TH3', N'Công nghệ thông tin', N'DTH235758'),
 (N'DTH235829', N'Lưu Trọng Quý', N'2004-02-01', N'Nam', N'DH24TH3', N'Công nghệ thông tin', N'DTH235829'),
 (N'DKH234819', N'Đặng Nguyễn Bảo Thiên', N'2005-02-09', N'Nam', N'DH24KH', N'Kỹ Thuật - Công nghệ - Môi Trường', N'DKH234819'),
-(N'DKH234801', N'Nguyễn Hoàng Minh Anh', N'2005-01-01', N'Nữ', N'DH24KH', N'Kỹ Thuật - Công nghệ - Môi Trường', N'DKH234801');
-Go
+(N'DKH234801', N'Nguyễn Hoàng Minh Anh', N'2005-01-01', N'Nữ', N'DH24KH', N'Kỹ Thuật - Công nghệ - Môi Trường', N'DKH234801'),
+
+('DTH235701', N'Nguyễn Văn An', '2005-03-14', N'Nam', N'DH24TH1', N'Công nghệ thông tin', 'DTH235701'),
+('DKT235702', N'Trần Thị Mỹ Duyên', '2005-07-22', N'Nữ', N'DH24KT1', N'Kế toán', 'DKT235702'),
+('DNN235703', N'Lê Minh Tâm', '2004-12-11', N'Nam', N'DH24NN1', N'Nông nghiệp', 'DNN235703'),
+('DDL235704', N'Võ Quốc Huy', '2005-01-08', N'Nam', N'DH24DL1', N'Du lịch', 'DDL235704'),
+('DSP235705', N'Nguyễn Ngọc Hân', '2005-06-29', N'Nữ', N'DH24SP1', N'Sư phạm Toán', 'DSP235705'),
+('DTH235706', N'Phạm Hoàng Phúc', '2005-05-20', N'Nam', N'DH24TH2', N'Công nghệ thông tin', 'DTH235706'),
+('DKT235707', N'Huỳnh Thị Mỹ Linh', '2005-02-25', N'Nữ', N'DH24KT1', N'Kế toán', 'DKT235707'),
+('DNN235708', N'Trần Đức Toàn', '2004-09-09', N'Nam', N'DH24NN2', N'Nông nghiệp', 'DNN235708'),
+('DDL235709', N'Lâm Gia Huy', '2005-10-15', N'Nam', N'DH24DL2', N'Du lịch', 'DDL235709'),
+('DTH235710', N'Võ Thanh Phương', '2005-08-04', N'Nam', N'DH24TH3', N'Công nghệ thông tin', 'DTH235710'),
+('DNN235711', N'Lý Bảo Trân', '2005-11-12', N'Nữ', N'DH24NN2', N'Nông nghiệp', 'DNN235711'),
+('DTH235712', N'Nguyễn Đức Lộc', '2005-09-18', N'Nam', N'DH24TH2', N'Công nghệ thông tin', 'DTH235712'),
+('DKT235713', N'Trương Minh Khải', '2005-07-05', N'Nam', N'DH24KT2', N'Kế toán', 'DKT235713'),
+('DDL235714', N'Võ Nhật Hào', '2005-02-08', N'Nam', N'DH24DL2', N'Du lịch', 'DDL235714'),
+('DNN235715', N'Nguyễn Thị Cẩm Tiên', '2005-04-25', N'Nữ', N'DH24NN1', N'Nông nghiệp', 'DNN235715'),
+('DTH235716', N'Đoàn Minh Khang', '2005-01-14', N'Nam', N'DH24TH3', N'Công nghệ thông tin', 'DTH235716'),
+('DTA235717', N'Phan Thị Thu Thảo', '2005-03-19', N'Nữ', N'DH24TA1', N'Ngôn ngữ Anh', 'DTA235717'),
+('DKT235718', N'Lưu Minh Đức', '2005-12-09', N'Nam', N'DH24KT2', N'Kế toán', 'DKT235718'),
+('DSP235719', N'Nguyễn Thanh Tùng', '2005-06-10', N'Nam', N'DH24SP1', N'Sư phạm Toán', 'DSP235719'),
+('DTH235720', N'Hồ Ngọc Yến', '2005-08-21', N'Nữ', N'DH24TH1', N'Công nghệ thông tin', 'DTH235720');
+GO
 
 INSERT INTO GiangVien(MaGV,HoTen, GioiTinh, TenDangNhap)
 VALUES
@@ -131,8 +180,14 @@ VALUES
 (N'GV003', N'N.T.L.Quyên', N'Nữ', N'GV003'),
 (N'GV004', N'N.T.N.Loan', N'Nữ', N'GV004'),
 (N'GV005', N'L.V.Dót', N'Nam', N'GV005'),
-(N'GV006', N'H.T.Thành', N'Nam', N'GV006');
-Go
+(N'GV006', N'H.T.Thành', N'Nam', N'GV006'),
+
+(N'GV007', N'L.T.H. Trang', N'Nữ', N'GV007'),
+(N'GV008', N'T.V.L. Phúc', N'Nam', N'GV008'),
+(N'GV009', N'N.T.K. Duyên', N'Nữ', N'GV009'),
+(N'GV010', N'P.H. Nghĩa', N'Nam', N'GV010'),
+(N'GV011', N'T.T. Đạt', N'Nam', N'GV011');
+GO
 
 INSERT INTO MonHoc (MaMH, TenMH, SoTinChi, PtKt, PtThi, HocKy, NamHoc, MaGV)
 VALUES
