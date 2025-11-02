@@ -35,6 +35,18 @@ def add_sv(frame_right):
         cb_mh["values"] = mh_list
         conn.close()
 
+    tk.Label(input_frame, text="Học kỳ: ", font=("Times New Roman", 12, "bold"), bg="white",).grid(
+        row=1, column=0, sticky="e", padx=5, pady=5
+    )
+    entry_hk = tk.Entry(input_frame, font=("Times New Roman", 12), width=20)
+    entry_hk.grid(row=1, column=1, padx=5, pady=5, sticky="w")
+
+    tk.Label(input_frame, text="Năm học: ", font=("Times New Roman", 12, "bold"), bg="white").grid(
+        row=1, column=2, sticky="e", padx=5, pady=5
+    )
+    entry_namhoc = tk.Entry(input_frame, font=("Times New Roman", 12), width=20)
+    entry_namhoc.grid(row=1, column=3, padx=5, pady=5, sticky="w")
+
     # ==========================================================
     # ===================== NÚT CHỨC NĂNG ======================
     # ==========================================================
@@ -136,6 +148,31 @@ def add_sv(frame_right):
     # =================== SỰ KIỆN CHỌN MÔN HỌC =================
     # ==========================================================
     def on_mh_selected(event):
+        mh_selected = cb_mh.get().strip()
+        if not mh_selected:
+            return
+
+        ma_mh = mh_selected.split(" - ")[0]
+
+        try:
+            conn = get_db_connect()
+            cursor = conn.cursor()
+            cursor.execute("SELECT HocKy, NamHoc FROM MonHoc WHERE MaMH = ?", (ma_mh,))
+            row = cursor.fetchone()
+            conn.close()
+
+            # Xóa nội dung cũ
+            entry_hk.delete(0, tk.END)
+            entry_namhoc.delete(0, tk.END)
+
+            if row:
+                entry_hk.insert(0, str(row[0]))
+                entry_namhoc.insert(0, str(row[1]))
+
+        except Exception as e:
+            messagebox.showerror("Lỗi", str(e))
+
+        # Sau khi hiển thị học kỳ/năm học thì tải danh sách sinh viên của môn học
         TaiDuLieu()
 
     cb_mh.bind("<<ComboboxSelected>>", on_mh_selected)
