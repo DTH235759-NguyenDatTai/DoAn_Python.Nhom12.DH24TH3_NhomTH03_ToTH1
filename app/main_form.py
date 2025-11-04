@@ -25,7 +25,7 @@ def create_mainForm(username, role):
 
     # ====== KHUNG TRÁI ======
     frame_left = tk.Frame(mainform, bg="white", bd=1, relief="solid")
-    frame_left.place(x=30, y=30, width=320, height=590)
+    frame_left.place(x=30, y=30, width=320, height=600)
 
     lbl_info = tk.Label(frame_left, text="Thông tin người dùng", bg="white", font=label_font)
     lbl_info.pack(pady=(15, 10))
@@ -46,7 +46,7 @@ def create_mainForm(username, role):
     
     # ====== KHUNG PHẢI (ẢNH) ======
     frame_right = tk.Frame(mainform, bg="white", bd=1, relief="solid")
-    frame_right.place(x=370, y=30, width=950, height=590)
+    frame_right.place(x=370, y=30, width=950, height=600)
 
     # Tiêu đề (đưa khoa và trường xuống dòng)
     lbl_title = tk.Label(
@@ -83,7 +83,7 @@ def create_mainForm(username, role):
     if role == "admin":
         buttons = admin_gui.create_admin_button(frame_right, username)
     elif role == "giangvien":
-        buttons = giangVien_gui.create_gv_form(frame_right)
+        buttons = giangVien_gui.create_gv_form(frame_right, username)
     elif role == "sinhvien":
         buttons = sinhVien_gui.create_sv_gui(frame_right, username)
     else:
@@ -95,4 +95,6 @@ def create_mainForm(username, role):
         btn.pack(pady=8)
 #     # Chạy test 
     mainform.mainloop()
+# create_mainForm("admin", "admin")
 create_mainForm("GV001", "giangvien")
+# create_mainForm("DTH235759", "sinhvien")

@@ -119,11 +119,11 @@ def add_diem(frame_right):
     # ================= BẢNG HIỂN THỊ DỮ LIỆU ==================
     # ==========================================================
     # Frame chứa canvas và scrollbar
-    canvas_frame = tk.Frame(frame_right, bg="white", bd=2, relief="groove")
+    canvas_frame = tk.Frame(frame_right, bg="white")
     canvas_frame.pack(padx=10, pady=10, fill="both", expand=True)
 
     # Canvas để cuộn
-    canvas = tk.Canvas(canvas_frame, bg="white", highlightthickness=0)
+    canvas = tk.Canvas(canvas_frame, bg="white", highlightthickness=10)
     v_scroll = ttk.Scrollbar(canvas_frame, orient="vertical", command=canvas.yview)
     h_scroll = ttk.Scrollbar(canvas_frame, orient="horizontal", command=canvas.xview)
     
