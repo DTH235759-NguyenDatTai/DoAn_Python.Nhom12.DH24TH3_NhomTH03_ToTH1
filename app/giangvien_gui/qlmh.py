@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 from db_connect import get_db_connect
 
-def xem_thongtin(frame_right, username):
+def qlMonHoc(frame_right, username):
     # ===== Xóa nội dung cũ =====
     for widget in frame_right.winfo_children():
         widget.destroy()

@@ -15,7 +15,6 @@ def create_sv_gui(frame_right, username):
     buttons = [
         ("Xem thông tin", info_sv),
         ("Xem điểm", diem_sv),
-        ("Xem điểm tổng kết", lambda: messagebox.showinfo("Thông báo", "Chức năng đang phát triển")),
         ("Thoát", exit_app)
     ]
     return buttons

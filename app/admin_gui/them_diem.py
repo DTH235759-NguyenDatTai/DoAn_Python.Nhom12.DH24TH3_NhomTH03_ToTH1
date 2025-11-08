@@ -240,7 +240,7 @@ def add_diem(frame_right):
                 fg="white",
                 font=("Arial", 10, "bold"),
                 width=width//8,
-                height=2,
+                height=3,
                 relief="solid",
                 borderwidth=1,
                 anchor="center",
@@ -263,16 +263,23 @@ def add_diem(frame_right):
             table_widgets.append(row_frame)
             
             ma_mh, ten_mh, so_tc, pt_kt, pt_thi, diem_qt, diem_ck = row_data
-            
+
+            # Nếu chưa có điểm (NULL) -> mặc định = 0.0
+            if diem_qt is None:
+                diem_qt = 0.0
+            if diem_ck is None:
+                diem_ck = 0.0
+
             # Tính điểm tổng kết
             diem_tk_10 = None
             diem_tk_4 = None
             he_chu = None
-            if diem_qt is not None and diem_ck is not None and pt_kt is not None and pt_thi is not None:
+            # Chỉ cần pt_kt và pt_thi có giá trị để tính
+            if pt_kt is not None and pt_thi is not None:
                 diem_tk_10 = round((diem_qt * pt_kt + diem_ck * pt_thi) / 100, 2)
                 diem_tk_4 = chuyen_doi_diem_he_4(diem_tk_10)
                 he_chu = chuyen_doi_diem_chu(diem_tk_10)
-                
+
                 # Cộng vào tổng để tính GPA
                 tong_diem_tk += diem_tk_10 * so_tc
                 tong_tin_chi += so_tc
@@ -287,8 +294,8 @@ def add_diem(frame_right):
                 str(so_tc),  # TC
                 f"{pt_kt}%",  # % KT
                 f"{pt_thi}%",  # % Thi
-                f"{diem_qt:.2f}" if diem_qt is not None else "",  # Điểm Giữa Kỳ
-                f"{diem_ck:.2f}" if diem_ck is not None else "",  # Thi L1
+                f"{diem_qt:.2f}",  # Điểm Giữa Kỳ (mặc định 0 nếu chưa có)
+                f"{diem_ck:.2f}",  # Thi L1 (mặc định 0 nếu chưa có)
                 ""  # Thi L2 (không có)
             ]
             
@@ -302,7 +309,7 @@ def add_diem(frame_right):
                     fg="black",
                     font=("Arial", 10),
                     width=width//8,
-                    height=1,
+                    height=2,
                     relief="solid",
                     borderwidth=1,
                     anchor=align,
@@ -491,10 +498,7 @@ def add_diem(frame_right):
         mssv = sv_selected.split(" - ")[0]
         ma_mh = mh_selected.split(" - ")[0]
 
-        # Validate điểm
-        diem_qt = None
-        diem_ck = None
-
+        # Validate điểm - nếu không nhập thì mặc định = 0
         if diem_qt_str:
             try:
                 diem_qt = float(diem_qt_str)
@@ -504,6 +508,8 @@ def add_diem(frame_right):
             except ValueError:
                 messagebox.showwarning("Sai định dạng", "Điểm giữa kỳ phải là số.")
                 return
+        else:
+            diem_qt = 0.0
 
         if diem_ck_str:
             try:
@@ -514,6 +520,8 @@ def add_diem(frame_right):
             except ValueError:
                 messagebox.showwarning("Sai định dạng", "Điểm cuối kỳ phải là số.")
                 return
+        else:
+            diem_ck = 0.0
 
         try:
             conn = get_db_connect()
@@ -620,3 +628,5 @@ def add_diem(frame_right):
 
     cb_sv.bind("<<ComboboxSelected>>", on_sv_selected)
     cb_mh.bind("<<ComboboxSelected>>", on_mh_selected)
+
+    
