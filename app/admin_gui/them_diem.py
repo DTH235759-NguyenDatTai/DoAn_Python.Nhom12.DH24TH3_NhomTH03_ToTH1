@@ -84,12 +84,48 @@ def add_diem(frame_right):
         cb_sv["values"] = sv_list
         conn.close()
 
-    # Chọn môn học
-    tk.Label(input_frame, text="Chọn môn học:", font=("Times New Roman", 12, "bold"), bg="white").grid(
+    # Tìm kiếm sinh viên
+    tk.Label(input_frame, text="Tim Sinh Viên:", font=("Times New Roman", 12, "bold"), bg="white").grid(
         row=1, column=0, sticky="e", padx=5, pady=5
     )
+
+    entry_sv = tk.Entry(input_frame, font=("Times New Roman", 12), width=20)
+    entry_sv.grid(row=1, column=1, padx=5, pady=5, sticky="w")
+
+    # ====== TÌM KIẾM SINH VIÊN ======
+    def tim_kiem_sv(event=None):
+        text = entry_sv.get().strip().lower()
+
+        conn = get_db_connect()
+        cursor = conn.cursor()
+        cursor.execute("SELECT MSSV, HoTen FROM SinhVien ORDER BY MSSV")
+        full_list = cursor.fetchall()
+        conn.close()
+
+        # Lọc MSSV hoặc Họ tên
+        filtered = []
+
+        for ma, ten in full_list:
+            if text in ma.lower() or text in ten.lower():
+                filtered.append(f"{ma} - {ten}")
+
+        # Gán danh sách vào Combobox
+        cb_sv["values"] = filtered
+
+        if filtered:
+            cb_sv.set(filtered[0])
+        else:
+            cb_sv.set("")  # làm sạch combobox
+
+    # Gắn sự kiện mỗi lần gõ phím
+    entry_sv.bind("<KeyRelease>", tim_kiem_sv)
+
+    # Chọn môn học
+    tk.Label(input_frame, text="Chọn môn học:", font=("Times New Roman", 12, "bold"), bg="white").grid(
+        row=2, column=0, sticky="e", padx=5, pady=5
+    )
     cb_mh = ttk.Combobox(input_frame, font=("Times New Roman", 12), width=35, state="readonly")
-    cb_mh.grid(row=1, column=1, padx=5, pady=5, sticky="w")
+    cb_mh.grid(row=2, column=1, padx=5, pady=5, sticky="w")
 
     # Nhập điểm giữa kỳ
     tk.Label(input_frame, text="Điểm giữa kỳ:", font=("Times New Roman", 12, "bold"), bg="white").grid(

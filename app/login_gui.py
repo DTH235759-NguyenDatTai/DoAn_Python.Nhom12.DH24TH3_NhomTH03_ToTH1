@@ -28,7 +28,6 @@ def create_login_form(parent_window):
 
         if row:
             role = row[0]
-            messagebox.showinfo("Đăng nhập thành công")
             loginForm.destroy()
             if parent_window:
                 parent_window.destroy()

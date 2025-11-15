@@ -26,6 +26,12 @@ def add_sv(frame_right):
     cb_mh = ttk.Combobox(input_frame, font=("Times New Roman", 12), width=40, state="readonly")
     cb_mh.grid(row=0, column=1, padx=5, pady=5, sticky="w")
 
+    tk.Label(input_frame, text="Tìm kiếm môn học:", font=("Times New Roman", 12, "bold"), bg="white").grid(
+        row=0, column=2, sticky="e", padx=5, pady=5
+    )
+
+    entry_mh = tk.Entry(input_frame, font=("Times New Roman", 12), width=20)
+    entry_mh.grid(row=0, column=3, padx=5, pady=5, sticky="w")
     # Lấy danh sách môn học từ SQL
     conn = get_db_connect()
     if conn:
@@ -46,6 +52,38 @@ def add_sv(frame_right):
     )
     entry_namhoc = tk.Entry(input_frame, font=("Times New Roman", 12), width=20)
     entry_namhoc.grid(row=1, column=3, padx=5, pady=5, sticky="w")
+
+    # ====== TÌM KIẾM MÔN HỌC ======
+    def tim_kiem_mh(event=None):
+        text = entry_mh.get().strip().lower()
+
+        conn = get_db_connect()
+        cursor = conn.cursor()
+        cursor.execute("SELECT MaMH, TenMH FROM MonHoc ORDER BY NamHoc DESC, HocKy ASC")
+        full_list = cursor.fetchall()
+        conn.close()
+
+        # Lọc theo Mã MH hoặc Tên MH
+        filtered = []
+        for ma, ten in full_list:
+            if text in ma.lower() or text in ten.lower():
+                filtered.append(f"{ma} - {ten}")
+
+        cb_mh["values"] = filtered
+
+        # Nếu có kết quả → chọn dòng đầu tiên
+        if filtered:
+            cb_mh.set(filtered[0])
+            on_mh_selected(None)
+        else:
+            cb_mh.set("")
+            entry_hk.delete(0, tk.END)
+            entry_namhoc.delete(0, tk.END)
+            for row in tree.get_children():
+                tree.delete(row)
+
+    # Gắn sự kiện mỗi lần gõ phím
+    entry_mh.bind("<KeyRelease>", tim_kiem_mh)
 
     # ==========================================================
     # ===================== NÚT CHỨC NĂNG ======================
